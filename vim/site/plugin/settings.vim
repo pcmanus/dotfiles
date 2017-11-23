@@ -92,4 +92,5 @@ set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg
 " }}}
 
 " Plugins {{{
+let g:gutentags_ctags_tagfile='.tagsfile'
 " }}}
