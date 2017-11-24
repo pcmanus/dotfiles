@@ -3,7 +3,7 @@
 CURRENT_DIR=`pwd`
 CONFIG_DIR=".config"
 VERBOSE=0
-DRY_RUN=0
+DRY_RUN=1
 
 # Usage: install source dest
 function install()
@@ -76,17 +76,30 @@ function install_polybar()
     install_config "polybar"
 }
 
+function install_other()
+{
+    echo "Installing other files..."
+    install "wallpaper.png" ".wallpaper.png"
+
+    for i in $CURRENT_DIR/bin/*
+    do
+        filename=`basename $i`
+        install_raw "$i" "$HOME/.bin/$filename"
+    done
+}
+
 function show_help()
 {
     echo  "Usage: $0 [-h] [-v] <command>"
     echo ""
     echo -e "\t-h: display this help message"
+    echo -e "\t-f: do install files; to avoid mistake, the script default to a dry-run and this force actual installation"
     echo -e "\t-v: verbose output (show details of what the script actually does)"
     echo -e "\t<command>: what to install. This can be 'all' to install everything, or a specific thing like 'vim'"
 }
 
 OPTIND=1 # Used by getopts
-while getopts "h?vd" opt; do
+while getopts "h?vf" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -95,8 +108,8 @@ while getopts "h?vd" opt; do
     v)
         VERBOSE=1
         ;;
-    d)
-        DRY_RUN=1
+    f)
+        DRY_RUN=0
         ;;
     esac
 done
@@ -111,6 +124,8 @@ then
     exit 1
 fi
 
+[ $DRY_RUN -eq 1 ] && echo -ne "\n!!! Running dry-run; Use -f to really install files !!!\n\n"
+
 case "$1" in
     vim)
         install_vim
@@ -124,11 +139,15 @@ case "$1" in
     i3)
         install_i3
         ;;
+    other)
+        install_other
+        ;;
     all)
         install_vim
         install_rofi
         install_polybar
         install_i3
+        install_other
         ;;
     *)
         echo "Unknow command '$1'"
