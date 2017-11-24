@@ -1,0 +1,337 @@
+; Polybar configurtaion (https://github.com/jaagr/polybar)
+
+
+; Icons
+;
+;         
+;                       
+
+[colors]
+background = #343434
+background-alt = #636363
+foreground = #fff
+orange = #e4bc87
+bright-yellow = #bec55b
+dim-yellow = #fcd49f
+blue = #8ab3d5
+violet = #a89bb9
+red = #cb6077
+cyan = #7bcdb4
+green = #aec795
+gray = #a8a8a8
+
+[settings]
+screenchange-reload = true
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+[bar/main]
+width = 100%
+height = 20
+radius = 0.0
+fixed-center = true
+bottom = true
+
+background = #333
+foreground = ${colors.foreground}
+
+line-size = 2
+line-color = #080
+
+border-top-size = 1
+border-top-color = #515151
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 2
+module-margin-right = 2
+
+font-0 = DejaVuSans-Mono:size=8;1
+font-1 = fontawesome:size=10;1
+
+modules-left = i3
+modules-center = date
+modules-right =  cpu memory eth
+
+dim-value = 1
+
+tray-position = right
+tray-padding = 1
+tray-maxsize = 16
+tray-transparent = false
+tray-background = ${colors.background-alt}
+
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+ws-icon-0 = 1;
+ws-icon-1 = 2;
+ws-icon-2 = 3;
+ws-icon-3 = 4;
+ws-icon-4 = 5;
+ws-icon-5 = 6;
+ws-icon-6 = 7;
+ws-icon-7 = 8;
+ws-icon-8 = 9;
+ws-icon-9 = 10;
+ws-icon-default = " "
+
+label-mode-padding = 2
+label-mode-foreground = #000
+label-mode-background = #f00
+
+; focused = Active workspace on focused monitor
+label-focused = %name%
+label-focused-background = ${colors.background-alt}
+label-focused-foreground = ${colors.orange}
+label-focused-underline = ${colors.orange}
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %name%
+label-unfocused-padding = 2
+
+; visible = Active workspace on unfocused monitor
+label-visible = %name%
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-focused-underline}
+label-visible-padding = 2
+
+; urgent = Workspace with urgency hint set
+label-urgent = %name%
+label-urgent-background = ${self.label-focused-background}
+label-urgent-foreground = #db104e
+label-urgent-padding = 2
+
+[module/xbacklight]
+type = internal/xbacklight
+
+format =  <label> <bar>
+label = %percentage%%
+
+bar-width = 10
+bar-indicator = 
+bar-indicator-foreground = #fff
+bar-indicator-font = 2
+bar-fill = 
+bar-fill-font = 2
+bar-fill-foreground = #9f78e1
+bar-empty = 
+bar-empty-font = 2
+bar-empty-foreground = #fff
+
+[module/backlight-acpi]
+inherit = module/xbacklight
+type = internal/backlight
+card = intel_backlight
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format = <label>
+format-foreground = #fff
+format-prefix = " "
+format-prefix-foreground = ${colors.red}
+format-underline = ${colors.red}
+label = %percentage%%
+
+;ramp-coreload-0 = %{F#b5808b}▁%{F-}
+;ramp-coreload-1 = %{F#b17380}▂%{F-}
+;ramp-coreload-2 = %{F#a76371}▃%{F-}
+;ramp-coreload-3 = %{F#a75364}▄%{F-}
+;ramp-coreload-4 = %{F#a24155}▅%{F-}
+;ramp-coreload-5 = %{F#9f334a}▆%{F-}
+;ramp-coreload-6 = %{F#a02b44}▇%{F-}
+;ramp-coreload-7 = %{F#9c1e3a}█%{F-}
+
+[module/memory]
+type = internal/memory
+interval = 2
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.blue}
+format-underline = ${colors.blue}
+
+bar-used-indicator =
+bar-used-width = 10
+bar-used-foreground-0 = #3384d0
+bar-used-fill = 
+bar-used-empty = 
+bar-used-empty-foreground = #ffffff
+
+[module/wlan]
+type = internal/network
+interface = wlp59s0
+interval = 3.0
+
+format-connected = <label-connected>
+format-connected-foreground = #7e52c6
+format-connected-underline = #7e52c6
+label-connected = %essid%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+ramp-signal-0 = ▁
+ramp-signal-1 = ▂
+ramp-signal-2 = ▃
+ramp-signal-3 = ▄
+ramp-signal-4 = ▅
+ramp-signal-5 = ▆
+ramp-signal-6 = ▇
+ramp-signal-7 = █
+ramp-signal-foreground = #7e52c6
+
+[module/eth]
+type = internal/network
+interface = enp2s0
+interval = 3.0
+
+format-connected-prefix = ""
+format-connected-prefix-foreground = ${colors.violet}
+format-connected-underline = ${colors.violet}
+label-connected = %local_ip%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = "   %d %b %Y"
+date-alt = " %Y-%m-%d"
+
+time = "  %{F#a8a8a8} %{F#ffffff}  %H:%M"
+time-alt = %H:%M:%S
+
+format-prefix = 
+format-prefix-foreground = ${colors.gray}
+format-underline = ${colors.gray}
+
+label = %date%  %time%
+
+[module/volume]
+type = internal/volume
+
+format-volume = "<label-volume>  <bar-volume>"
+label-volume = 
+label-volume-foreground = #40ad4b
+
+format-muted-prefix = " "
+format-muted-foreground = ${colors.foreground}
+label-muted = muted
+
+bar-volume-width = 20
+bar-volume-foreground-0 = #40ad4b
+bar-volume-foreground-1 = #40ad4b
+bar-volume-foreground-2 = #40ad4b
+bar-volume-foreground-3 = #40ad4b
+bar-volume-foreground-4 = #40ad4b
+bar-volume-foreground-5 = #40ad4b
+bar-volume-foreground-6 = #40ad4b
+bar-volume-gradient = false
+bar-volume-indicator = 
+bar-volume-indicator-font = 2
+bar-volume-fill = 
+bar-volume-fill-font = 2
+bar-volume-empty = 
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = ${colors.foreground}
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = AC0
+full-at = 100
+
+format-charging = <animation-charging> <label-charging>
+label-charging =  %percentage%%
+format-charging-underline = #a3c725
+
+format-discharging = <ramp-capacity> <label-discharging>
+label-discharging =  %percentage%%
+format-discharging-underline = #c7ae25
+
+format-full-prefix = " "
+format-full-prefix-foreground = #a3c725
+format-full-underline = #a3c725
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+ramp-capacity-foreground = #c7ae25
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-foreground = #a3c725
+animation-charging-framerate = 750
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 0
+warn-temperature = 60
+
+format = <ramp> <label>
+format-foreground = #fff
+format-underline = #c72581
+format-warn = <ramp> <label-warn>
+format-warn-underline = #c7254f
+
+label = %temperature%
+label-warn =  %temperature%
+label-warn-foreground = #c7254f
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+ramp-foreground = #c72581
+
+[module/powermenu]
+type = custom/menu
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = #e60053
+label-close =  close
+label-close-foreground = #e60053
+label-separator = |
+label-separator-foreground = #ccc
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+

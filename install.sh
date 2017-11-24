@@ -3,37 +3,77 @@
 CURRENT_DIR=`pwd`
 CONFIG_DIR=".config"
 VERBOSE=0
+DRY_RUN=0
 
 # Usage: install source dest
 function install()
 {
-    src="$CURRENT_DIR/$1"
-    dst="$HOME/$2"
+    install_raw "$CURRENT_DIR/$1" "$HOME/$2"
+}
+
+function install_raw()
+{
+    src="$1"
+    dst="$2"
+    [ $VERBOSE -eq 1 ] && echo "Installing $src to $dst"
     dst_dir=`dirname $dst`
-    if [ ! -e $dst_dir ]; then
+    if [ ! -e $dst_dir ]
+    then
         [ $VERBOSE -eq 1 ] && echo "Creating directory $dst_dir"
-        mkdir -p "$dst_dir"
+        [ $DRY_RUN -eq 0 ] && mkdir -p "$dst_dir"
     fi
 
-    if [ -e $dst ]; then
+    if [ -e $dst ]
+    then
         # If dst exists but is not a symlink, something is wrong, error out
-        if [ ! -L $dst ]; then
+        if [ ! -L $dst ]
+        then
             echo "$dst already exists and is not a symlink; Freaking out"
             exit 1
         else
             [ $VERBOSE -eq 1 ] && echo "Removing existing symlink $dst"
-            rm $dst
+            [ $DRY_RUN -eq 0 ] && rm $dst
         fi
     fi
     [ $VERBOSE -eq 1 ] && echo "Creating symlink $src -> $dst"
-    ln -s -f "$src" "$dst"
+    [ $DRY_RUN -eq 0 ] && ln -s -f "$src" "$dst"
+}
+
+# Usage: install_config module
+# As shortcut over install for things going directly in .config
+function install_config()
+{
+    module=$1
+    for i in $CURRENT_DIR/$module/*
+    do
+        filename=`basename $i`
+        install_raw "$i" "$HOME/$CONFIG_DIR/$module/$filename"
+    done
 }
 
 function install_vim()
 {
     echo "Installing vim files..."
-    install "vim/init.vim" "$CONFIG_DIR/nvim/init.vim"
-    install "vim/site" ".local/share/nvim/site"
+    install "nvim/init.vim" "$CONFIG_DIR/nvim/init.vim"
+    install "nvim/site" ".local/share/nvim/site"
+}
+
+function install_i3()
+{
+    echo "Installing i3 files..."
+    install_config "i3"
+}
+
+function install_rofi()
+{
+    echo "Installing rofi files..."
+    install_config "rofi"
+}
+
+function install_polybar()
+{
+    echo "Installing polybar files..."
+    install_config "polybar"
 }
 
 function show_help()
@@ -46,7 +86,7 @@ function show_help()
 }
 
 OPTIND=1 # Used by getopts
-while getopts "h?v" opt; do
+while getopts "h?vd" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -55,13 +95,16 @@ while getopts "h?v" opt; do
     v)
         VERBOSE=1
         ;;
+    d)
+        DRY_RUN=1
+        ;;
     esac
 done
 
 shift $((OPTIND-1))
 [ "$1" = "--" ] && shift
 
-if [ "$#" -ne 1 ];
+if [ "$#" -ne 1 ]
 then
     echo "Missing what to install"
     show_help
@@ -72,8 +115,20 @@ case "$1" in
     vim)
         install_vim
         ;;
+    polybar)
+        install_polybar
+        ;;
+    rofi)
+        install_rofi
+        ;;
+    i3)
+        install_i3
+        ;;
     all)
         install_vim
+        install_rofi
+        install_polybar
+        install_i3
         ;;
     *)
         echo "Unknow command '$1'"
