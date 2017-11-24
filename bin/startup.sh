@@ -9,6 +9,6 @@ multihead=`xrandr | grep " connected " | grep "DP2-2" | wc -l`
 if [ $multihead -eq 1 ]
 then
     $HOME/.bin/godualscreen.sh
-else
+fi
 
 feh --bg-scale $HOME/.wallpaper.png

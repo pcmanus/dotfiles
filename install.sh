@@ -61,7 +61,7 @@ function install_vim()
 function install_zsh()
 {
     echo "Installing zsh files..."
-    install "zsh/zhsrc" ".zshrc"
+    install "zsh/zshrc" ".zshrc"
 }
 
 function install_i3()
