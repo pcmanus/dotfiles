@@ -58,6 +58,12 @@ function install_vim()
     install "nvim/site" ".local/share/nvim/site"
 }
 
+function install_zsh()
+{
+    echo "Installing zsh files..."
+    install "zsh/zhsrc" ".zshrc"
+}
+
 function install_i3()
 {
     echo "Installing i3 files..."
@@ -130,6 +136,9 @@ case "$1" in
     vim)
         install_vim
         ;;
+    zsh)
+        install_zsh
+        ;;
     polybar)
         install_polybar
         ;;
@@ -144,6 +153,7 @@ case "$1" in
         ;;
     all)
         install_vim
+        install_zsh
         install_rofi
         install_polybar
         install_i3
