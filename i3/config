@@ -58,7 +58,7 @@ bindsym $mod+Return exec xfce4-terminal
 bindsym $mod+Shift+q kill
 
 # start rofi (a program launcher)
-bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+d exec --no-startup-id PATH=$HOME/.bin:$PATH rofi -show run
 
 # change focus
 bindsym $mod+h focus left
@@ -173,6 +173,7 @@ set $Locker i3lock-fancy && sleep 1
 set $mode_system [l]ock, l[o]gout, [s]uspend, [h]ibernate, [r]eboot, [Shift+s]hutdown
 
 mode "$mode_system" {
+
     bindsym l exec --no-startup-id $Locker, mode "default"
     bindsym e exec --no-startup-id i3-msg exit, mode "default"
     bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
@@ -187,7 +188,12 @@ mode "$mode_system" {
 
 bindsym $mod+Pause mode "$mode_system"
 
+exec --no-startup-id pulseaudio
+exec --no-startup-id pa-applet
+bindsym $mod+Ctrl+m exec pavucontrol
+
 exec --no-startup-id compton -f --unredir-if-possible
+exec --no-startup-id xfce4-power-manager
 exec --no-startup-id nm-applet
 exec --no-startup-id sh $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id $HOME/.bin/startup.sh
@@ -202,4 +208,3 @@ gaps outer -4
 
 # Only gaps for more than 1 container
 smart_gaps on
-

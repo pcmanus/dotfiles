@@ -4,7 +4,7 @@
 ; Icons
 ;
 ;         
-;                       
+;                 
 
 [colors]
 background = #343434
@@ -54,7 +54,7 @@ font-1 = fontawesome:size=10;1
 
 dim-value = 1
 
-tray-padding = 1
+tray-padding = 2
 tray-maxsize = 16
 tray-transparent = false
 tray-background = ${colors.background-alt}
@@ -73,7 +73,7 @@ eth-interface = enp2s0
 inherit = section/base
 modules-left = i3
 modules-center = date
-modules-right =  cpu memory temperature battery wlan eth
+modules-right =  cpu memory battery wlan eth
 tray-position = right
 eth-interface = enp0s20u3u1u3
 wlan-interface = wlp4s0
@@ -92,7 +92,7 @@ wlan-interface = wlp4s0
 inherit = section/base
 monitor="DP2-2"
 modules-left = i3
-modules-right = cpu memory temperature battery wlan eth
+modules-right = cpu memory battery wlan eth
 tray-position = right
 eth-interface = enp0s20u3u1u3
 wlan-interface = wlp4s0
@@ -103,9 +103,10 @@ type = internal/i3
 format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false
+pin-workspaces = true
 
 ws-icon-0 = 1;
-ws-icon-1 = 2;
+ws-icon-1 = 2; 
 ws-icon-2 = 3;
 ws-icon-3 = 4;
 ws-icon-4 = 5;
@@ -146,7 +147,7 @@ label-urgent-padding = 2
 [module/xbacklight]
 type = internal/xbacklight
 
-format =  <label> <bar>
+format =  <label>
 label = %percentage%%
 
 bar-width = 10
@@ -227,10 +228,10 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date = "   %d %b %Y"
+date = "  %d %b %Y"
 date-alt = " %Y-%m-%d"
 
-time = "  %{F#a8a8a8} %{F#ffffff}  %H:%M"
+time = " %{F#a8a8a8} %{F#ffffff} %H:%M"
 time-alt = %H:%M:%S
 
 format-prefix = 

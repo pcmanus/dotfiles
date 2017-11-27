@@ -82,6 +82,12 @@ function install_polybar()
     install_config "polybar"
 }
 
+function install_dunst()
+{
+    echo "Installing dunst files..."
+    install_config "dunst"
+}
+
 function install_other()
 {
     echo "Installing other files..."
@@ -145,6 +151,9 @@ case "$1" in
     rofi)
         install_rofi
         ;;
+    dunst)
+        install_dunst
+        ;;
     i3)
         install_i3
         ;;
@@ -156,6 +165,7 @@ case "$1" in
         install_zsh
         install_rofi
         install_polybar
+        install_dunst
         install_i3
         install_other
         ;;
