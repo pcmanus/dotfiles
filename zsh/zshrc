@@ -9,6 +9,10 @@
 
 source ~/.zplug/init.zsh
 
+zplug "lib/history", from:oh-my-zsh
+zplug "lib/correction", from:oh-my-zsh
+zplug "lib/misc", from:oh-my-zsh
+
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-completions"
 
@@ -22,6 +26,7 @@ zplug "caarlos0/git-add-remote"
 zplug "hkupty/ssh-agent"
 zplug "srijanshetty/zsh-pip-completion"
 
+#
 zplug "zdharma/fast-syntax-highlighting", defer:2
 
 # Install plugins if there are plugins that have not been installed
@@ -49,12 +54,9 @@ alias ls='ls --color=auto -F'
 
 # Exports
 
-export HISTSIZE=100000
-export HISTFILE=$HOME/.history
-export SAVEHIST=$HISTSIZE
-
 export EDITOR=vim
 export VISUAL=vim
+export JAVA_HOME=/usr/lib/jvm/default
 
 # i = smart case in searches
 # F = exit immediately if fit one screen

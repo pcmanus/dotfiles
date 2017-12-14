@@ -22,6 +22,7 @@ gray = #a8a8a8
 
 [settings]
 screenchange-reload = true
+;format-padding = 1
 
 [global/wm]
 margin-top = 0
@@ -46,8 +47,8 @@ border-top-color = #515151
 padding-left = 0
 padding-right = 2
 
-module-margin-left = 2
-module-margin-right = 2
+module-margin-left = 1
+module-margin-right = 1
 
 font-0 = DejaVuSans-Mono:size=8;1
 font-1 = fontawesome:size=10;1
@@ -228,17 +229,17 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date = "  %d %b %Y"
+date = " %d %b %Y"
 date-alt = " %Y-%m-%d"
 
-time = " %{F#a8a8a8} %{F#ffffff} %H:%M"
+time = " %{F#a8a8a8} %{F#ffffff}%H:%M"
 time-alt = %H:%M:%S
 
 format-prefix = 
 format-prefix-foreground = ${colors.gray}
 format-underline = ${colors.gray}
 
-label = %date%  %time%
+label = %date% %time%
 
 [module/volume]
 type = internal/volume
@@ -272,7 +273,7 @@ bar-volume-empty-foreground = ${colors.foreground}
 type = internal/battery
 battery = BAT0
 adapter = AC
-full-at = 100
+full-at = 99
 
 format-charging = <animation-charging> <label-charging>
 label-charging = %percentage%%
