@@ -9,6 +9,10 @@ multihead=`xrandr | grep " connected " | grep "DP2-2" | wc -l`
 if [ $multihead -eq 1 ]
 then
     $HOME/.bin/godualscreen.sh
+else
+    $HOME/.bin/gosinglescreen.sh
 fi
 
 feh --bg-scale $HOME/.wallpaper.png
+
+$HOME/.config/polybar/launch.sh

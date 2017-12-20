@@ -197,11 +197,10 @@ bindsym $mod+Ctrl+m exec pavucontrol
 exec --no-startup-id compton -f --unredir-if-possible
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id nm-applet
-exec --no-startup-id sh $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id $HOME/.bin/startup.sh
 
-bindsym $mod+Shift+p exec $HOME/.bin/godualscreen.sh && sh $HOME/.config/polybar/launch.sh
-bindsym $mod+Shift+o exec $HOME/.bin/gosinglescreen.sh && sh $HOME/.config/polybar/launch.sh
+bindsym $mod+Shift+p exec $HOME/.bin/startup.sh
+bindsym $mod+Shift+o exec $HOME/.bin/startup.sh
 
 # Gaps for i3-gaps
 
