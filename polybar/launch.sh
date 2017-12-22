@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-# will be 1 when my 2 monitors are connected, 0 otherwise
-multihead=`xrandr | grep " connected " | grep "DP2-2" | wc -l`
+# number of monitors connected
+monitors=`xrandr | grep " connected " | wc -l`
 # will be 1 when on my laptop (called carbon), 0 otherwise
 laptop=`uname -a | grep "carbon" | wc -l`
 
@@ -10,9 +10,15 @@ killall -q polybar
 
 if [ $laptop -eq 0 ]
 then
-    polybar desktop &
+    if [ $monitors -eq 1 ]
+    then
+        polybar desktop &
+    else
+        polybar desktop-left &
+        polybar desktop-right &
+    fi
 else
-    if [ $multihead -eq 0 ]
+    if [ $monitors -eq 1 ]
     then
         polybar laptop-one &
     else

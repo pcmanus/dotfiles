@@ -69,6 +69,22 @@ modules-right =  cpu memory eth
 tray-position = right
 eth-interface = enp2s0
 
+[bar/desktop-left]
+inherit = section/base
+monitor="DVI-I-1"
+modules-left = i3
+modules-right = date
+eth-interface = enp2s0
+
+
+[bar/desktop-right]
+inherit = section/base
+monitor="DP-1"
+modules-left = i3
+modules-right = cpu memory eth
+tray-position = right
+eth-interface = enp2s0
+
 
 [bar/laptop-one]
 inherit = section/base

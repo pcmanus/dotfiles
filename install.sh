@@ -92,6 +92,7 @@ function install_other()
 {
     echo "Installing other files..."
     install "wallpaper.png" ".wallpaper.png"
+    install "yaourtrc" ".yaourtrc"
 
     for i in $CURRENT_DIR/bin/*
     do
