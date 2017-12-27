@@ -1,6 +1,7 @@
 #!/bin/sh
 
 setxkbmap -option caps:escape
+setxkbmap -option compose:ralt
 xset r rate 200 50
 
 # will be 1 when my 2 monitors are connected, 0 otherwise
