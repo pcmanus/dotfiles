@@ -12,6 +12,7 @@
 
     background:                 #888b;
     foreground:                 #ccc;
+    run-text:                   #eee;
     selected-background:        #ccc;
     selected-foreground:        #888;
 
@@ -36,10 +37,12 @@
 }
 
 #inputbar {
-    padding:    1px ;
+    padding: 0px 1px 5px 10px;
 }
 
 #prompt {
+    padding: 0px 10px 0px 0px;
+    text-color: @run-text;
 }
 
 #entry {
@@ -61,7 +64,8 @@
 
 #element {
     border:  0;
-    padding: 1px ;
+    //padding: 1px ;
+    padding: 2px 5px 2px 10px;
 }
 
 #element normal.urgent {

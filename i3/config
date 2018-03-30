@@ -177,7 +177,7 @@ set $mode_system [l]ock, l[o]gout, [s]uspend, [h]ibernate, [r]eboot, [Shift+s]hu
 mode "$mode_system" {
 
     bindsym l exec --no-startup-id $Locker, mode "default"
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym o exec --no-startup-id i3-msg exit, mode "default"
     bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
     bindsym h exec --no-startup-id $Locker && systemctl hibernate, mode "default"
     bindsym r exec --no-startup-id systemctl reboot, mode "default"
@@ -197,7 +197,7 @@ bindsym $mod+Ctrl+m exec pavucontrol
 exec --no-startup-id compton -f --unredir-if-possible
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id nm-applet
-exec_always --no-startup-id $HOME/.bin/startup.sh
+exec --no-startup-id blueman-applet
 
 bindsym $mod+Shift+p exec $HOME/.bin/startup.sh
 bindsym $mod+Shift+o exec $HOME/.bin/startup.sh
@@ -209,3 +209,5 @@ gaps outer -4
 
 # Only gaps for more than 1 container
 smart_gaps on
+
+exec_always --no-startup-id $HOME/.bin/startup.sh

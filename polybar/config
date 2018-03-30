@@ -1,10 +1,11 @@
-; Polybar configurtaion (https://github.com/jaagr/polybar)
+; Polybar configuration (https://github.com/jaagr/polybar)
 
 
 ; Icons
 ;
 ;         
-;                 
+;                  
+; 
 
 [colors]
 background = #343434
@@ -51,7 +52,8 @@ module-margin-left = 1
 module-margin-right = 1
 
 font-0 = DejaVuSans-Mono:size=8;1
-font-1 = fontawesome:size=10;1
+font-1 = "Font Awesome 5 Free:style=Solid,size=8;1"
+font-2 = "Font Awesome 5 Free:size=8;1"
 
 dim-value = 1
 
@@ -88,30 +90,31 @@ eth-interface = enp2s0
 
 [bar/laptop-one]
 inherit = section/base
+monitor="eDP1"
 modules-left = i3
 modules-center = date
 modules-right =  cpu memory battery wlan eth
 tray-position = right
-eth-interface = enp0s20u3u1u3
+eth-interface = enp0s31f6
 wlan-interface = wlp4s0
 
 
 [bar/laptop-left]
 inherit = section/base
-monitor="DP2-1"
+monitor="DP1-1"
 modules-left = i3
 modules-right = date
-eth-interface = enp0s20u3u1u3
+eth-interface = enp0s31f6
 wlan-interface = wlp4s0
 
 
 [bar/laptop-right]
 inherit = section/base
-monitor="DP2-2"
+monitor="DP1-2"
 modules-left = i3
 modules-right = cpu memory battery wlan eth
 tray-position = right
-eth-interface = enp0s20u3u1u3
+eth-interface = enp0s31f6
 wlan-interface = wlp4s0
 
 
@@ -188,7 +191,7 @@ type = internal/cpu
 interval = 2
 format = <label>
 format-foreground = #fff
-format-prefix = " "
+format-prefix = " "
 format-prefix-foreground = ${colors.red}
 format-underline = ${colors.red}
 label = %percentage%%

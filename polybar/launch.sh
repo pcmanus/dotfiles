@@ -2,8 +2,8 @@
 
 # number of monitors connected
 monitors=`xrandr | grep " connected " | wc -l`
-# will be 1 when on my laptop (called carbon), 0 otherwise
-laptop=`uname -a | grep "carbon" | wc -l`
+# will be 1 when on my laptop (called x1), 0 otherwise
+laptop=`uname -a | grep "x1" | wc -l`
 
 # Terminate already running instances
 killall -q polybar
