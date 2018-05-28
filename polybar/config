@@ -98,7 +98,6 @@ tray-position = right
 eth-interface = enp0s31f6
 wlan-interface = wlp4s0
 
-
 [bar/laptop-left]
 inherit = section/base
 monitor="DP1-1"

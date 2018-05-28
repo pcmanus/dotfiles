@@ -58,6 +58,9 @@ export EDITOR=vim
 export VISUAL=vim
 export JAVA_HOME=/usr/lib/jvm/default
 
+# For dtest
+export JAVA8_HOME=/usr/lib/jvm/java-8-jdk
+
 # i = smart case in searches
 # F = exit immediately if fit one screen
 # R = AINSI color support
@@ -71,3 +74,7 @@ BASE16_SHELL=$HOME/.config/base16-shell/
 
 # Load specific local changes if any
 [ -f $HOME/.zsh.local ] && source $HOME/.zsh.local
+
+# For the virtualenv wrapper
+export WORKON_HOME=~/.virtualenvs
+source /usr/bin/virtualenvwrapper_lazy.sh

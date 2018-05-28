@@ -211,3 +211,4 @@ gaps outer -4
 smart_gaps on
 
 exec_always --no-startup-id $HOME/.bin/startup.sh
+exec_always --no-startup-id xbindkeys

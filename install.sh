@@ -93,7 +93,8 @@ function install_other()
     echo "Installing other files..."
     install "wallpaper.png" ".wallpaper.png"
     install "yaourtrc" ".yaourtrc"
-    install "user-dirs.dirs" ".config/user-dirs.dirs"
+    install "xbindkeysrc" ".xbindkeysrc"
+    #install "user-dirs.dirs" ".config/user-dirs.dirs"
 
     for i in $CURRENT_DIR/bin/*
     do
