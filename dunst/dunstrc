@@ -77,7 +77,7 @@
     # present (e.g. xcompmgr, compiz, etc.).
     transparency = 20
     
-    5 Don't remove messages, if the user is idle (no mouse or keyboard input)
+    # Don't remove messages, if the user is idle (no mouse or keyboard input)
     # for longer than idle_threshold seconds.
     # Set to 0 to disable.
     # default 120
@@ -149,7 +149,7 @@
 
     # Paths to default icons.
     #icon_folders = /usr/share/icons/RAVE-X-CX/status/16/:/usr/share/icons/RAVE-X-CX/devices/16/
-    icon_folders = /usr/share/icons/Faenza/status/32/:/usr/share/icons/Faenza/devices/32/
+    icon_path = /usr/share/icons/Faenza/status/32/:/usr/share/icons/Faenza/devices/32/
     #icon_folders = /usr/share/icons/Paper/32x32/status/:/usr/share/icons/Paper/32x32/devices/
     #icon_folders = /usr/share/icons/Flat-Remix/status/:/usr/share/icons/Flat-Remix/devices/
 

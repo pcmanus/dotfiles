@@ -10,7 +10,7 @@
 [colors]
 background = #343434
 background-alt = #636363
-foreground = #fff
+foreground = #ddd
 orange = #e4bc87
 bright-yellow = #bec55b
 dim-yellow = #fcd49f
@@ -23,7 +23,6 @@ gray = #a8a8a8
 
 [settings]
 screenchange-reload = true
-;format-padding = 1
 
 [global/wm]
 margin-top = 0
@@ -51,7 +50,8 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = DejaVuSans-Mono:size=8;1
+font-0 = "Fira Code:weight=bold:size=8"
+#font-0 = DejaVuSans-Mono:size=8;1
 font-1 = "Font Awesome 5 Free:style=Solid,size=8;1"
 font-2 = "Font Awesome 5 Free:size=8;1"
 
@@ -95,17 +95,16 @@ modules-left = i3
 modules-center = date
 modules-right =  cpu memory battery wlan eth
 tray-position = right
-eth-interface = enp0s31f6
-wlan-interface = wlp4s0
+eth-interface = net0
+wlan-interface = wifi0
 
 [bar/laptop-left]
 inherit = section/base
 monitor="DP1-1"
 modules-left = i3
 modules-right = date
-eth-interface = enp0s31f6
-wlan-interface = wlp4s0
-
+eth-interface = net1
+wlan-interface = wifi0
 
 [bar/laptop-right]
 inherit = section/base
@@ -113,8 +112,8 @@ monitor="DP1-2"
 modules-left = i3
 modules-right = cpu memory battery wlan eth
 tray-position = right
-eth-interface = enp0s31f6
-wlan-interface = wlp4s0
+eth-interface = net1
+wlan-interface = wifi0
 
 
 [module/i3]
@@ -189,7 +188,7 @@ card = intel_backlight
 type = internal/cpu
 interval = 2
 format = <label>
-format-foreground = #fff
+format-foreground = ${colors.foreground}
 format-prefix = " "
 format-prefix-foreground = ${colors.red}
 format-underline = ${colors.red}
@@ -250,7 +249,7 @@ interval = 5
 date = " %d %b %Y"
 date-alt = " %Y-%m-%d"
 
-time = " %{F#a8a8a8} %{F#ffffff}%H:%M"
+time = " %{F#a8a8a8} %{F}%H:%M"
 time-alt = %H:%M:%S
 
 format-prefix = 
