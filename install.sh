@@ -94,6 +94,7 @@ function install_other()
     install "wallpaper.png" ".wallpaper.png"
     install "yaourtrc" ".yaourtrc"
     install "xbindkeysrc" ".xbindkeysrc"
+    install "ideavimrc" ".ideavimrc"
     #install "user-dirs.dirs" ".config/user-dirs.dirs"
 
     for i in $CURRENT_DIR/bin/*

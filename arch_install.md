@@ -227,3 +227,11 @@ Edit `~/.gradle/gradle.properties` with expected values and run:
 gradle jar
 gradle cleanIdea idea
 ```
+
+Git configuration:
+```
+git config --global core.excludesfile ~/.gitignore_global
+git config --global user.email "lebresne@gmail.com"
+git config --global user.name "Sylvain Lebresne"
+```
+Also create the `~/.gitignore_global` file and set `user.email` locally for work.
