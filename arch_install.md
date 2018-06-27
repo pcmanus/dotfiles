@@ -136,13 +136,14 @@ Post first-reboot (boot medium)
 
 Log as root and install all-the-things:
 ```
-pacman -S git zsh bc fzy xorg xf86-video-intel lightdm the_silver_searcher feh lxappearance-gtk3 faenza-icon-theme rofi ttf-font-awesome ttf-inconsolata xfce4-terminal dunst gimp network-manager-applet thunar xcursor-simpleandsoft pulseaudio pavucontrol acpid evince geeqie i3-gaps jdk8-openjdk lftp networkmanager-vpnc openssh otf-fira-code tk transmission-gtk ttf-fira-code gradle
+pacman -S git zsh bc fzy xorg xf86-video-intel lightdm the_silver_searcher feh lxappearance-gtk3 faenza-icon-theme rofi ttf-font-awesome ttf-inconsolata xfce4-terminal dunst gimp network-manager-applet thunar xcursor-simpleandsoft pulseaudio pavucontrol acpid evince geeqie i3-gaps jdk8-openjdk lftp networkmanager-vpnc openssh otf-fira-code tk transmission-gtk ttf-fira-code gradle intellij-idea-community-edition compton python-virtualenvwrapper wireless_tools xbindkeys
 ```
 
 Create user:
 ```
 useradd -m -g wheel -s /bin/zsh pcmanus
 passwd pcmanus
+systemctl enable sshd.socket
 ```
 then use `visudo` to make wheel sudoers.
 
@@ -166,11 +167,63 @@ cd ..
 
 And instal all-the-remaining-things:
 ```
-yaourt -Sq --noconfirm flat-remix-git google-chrome gradle-autowrap gtk-them-arc-grey-git i3-vim-syntax-git jdk8 lightdm-webkit2-greeter lightdm-webkit2-theme-material2 neovim-drop-in polybar slack-desktop spotify ttf-dejavu-sans-code universal-ctags-git
+yaourt --noconfirm -S flat-remix-git google-chrome gradle-autowrap gtk-theme-arc-grey-git i3-vim-syntax-git jdk8 lightdm-webkit2-greeter lightdm-webkit2-theme-material2 neovim-drop-in polybar slack-desktop spotify ttf-dejavu-sans-code universal-ctags-git pa-applet-git
 
 ```
 
 Then pull configurations:
 ```
+git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
+curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 git clone https://github.com/pcmanus/dotfiles
+cd dotfiles
+./install -f all
+```
+Then in a new shell, do:
+```
+base16_tomorrow-night
+```
+and start `vim` and do `:PlugInstall`
+
+And do additional configuration by setting in `/etc/lightdm/lightdm.conf`:
+```
+greeter-session=lightdm-webkit2-greeter
+```
+and in `/etc/lightdm/lightdm-webkit2-greeter.conf`:
+```
+[greeter]
+webkit_theme = material2
+```
+after which do:
+```
+systemctl enable lightdm.service
+```
+
+More config once in graphical environment:
+- In `intellij`, set `Fira Code` as font with ligature.
+- Launch `lxappearance` and set:
+  - GTK: Arc-Grey-Darker
+  - Icons: Flat Remix ( + Faenza)
+  - Mouse cursor: Simple-and-Soft (or Breeze)
+- In xfce4 terminal:
+  - Remove scrollbar and set 50k lines.
+  - Set Fira code as font
+  - Set transparent background at 0.8
+  - remove `Display menubar in new windows` & `Dispay borders around new windows`
+
+
+Work stuffs
+-----------
+
+In `Git`:
+```
+git clone https://github.com/riptano/bdp dse
+cd dse
+mkdir ~/.gradle
+cp gradle.properties.template ~/.gradle/gradle.properties
+```
+Edit `~/.gradle/gradle.properties` with expected values and run:
+```
+gradle jar
+gradle cleanIdea idea
 ```
