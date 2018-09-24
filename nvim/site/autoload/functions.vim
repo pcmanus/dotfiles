@@ -23,6 +23,18 @@ function! functions#plaintext() abort
     setlocal textwidth=78
 endfunction
 
+function! functions#jira() abort
+    setlocal spell
+    setlocal textwidth=78
+    setlocal syntax=confluencewiki
+endfunction
+
+function! functions#email() abort
+    setlocal spell
+    setlocal textwidth=78
+    setlocal syntax=mail
+endfunction
+
 
 function! functions#fuzzybuffers() abort
   " Get open buffers.

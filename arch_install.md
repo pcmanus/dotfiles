@@ -136,7 +136,7 @@ Post first-reboot (boot medium)
 
 Log as root and install all-the-things:
 ```
-pacman -S git zsh bc fzy xorg xf86-video-intel lightdm the_silver_searcher feh lxappearance-gtk3 faenza-icon-theme rofi ttf-font-awesome ttf-inconsolata xfce4-terminal dunst gimp network-manager-applet thunar xcursor-simpleandsoft pulseaudio pavucontrol acpid evince geeqie i3-gaps jdk8-openjdk lftp networkmanager-vpnc openssh otf-fira-code tk transmission-gtk ttf-fira-code gradle intellij-idea-community-edition compton python-virtualenvwrapper wireless_tools xbindkeys
+pacman -S git zsh bc fzy xorg xf86-video-intel lightdm the_silver_searcher feh lxappearance-gtk3 faenza-icon-theme rofi ttf-font-awesome ttf-inconsolata xfce4-terminal dunst gimp network-manager-applet thunar xcursor-simpleandsoft pulseaudio pavucontrol acpid evince geeqie i3-gaps jdk8-openjdk lftp networkmanager-vpnc openssh otf-fira-code tk transmission-gtk ttf-fira-code gradle intellij-idea-community-edition compton python-virtualenvwrapper wireless_tools xbindkeys xclip hub unzip apache-ant gradle
 ```
 
 Create user:
@@ -233,5 +233,38 @@ Git configuration:
 git config --global core.excludesfile ~/.gitignore_global
 git config --global user.email "lebresne@gmail.com"
 git config --global user.name "Sylvain Lebresne"
+git config --global rerere.enabled true
+git config --global merge.renamelimit 16384
 ```
 Also create the `~/.gitignore_global` file and set `user.email` locally for work.
+
+Should also probably add a new key to github:
+```
+ssh-keygen -t rsa -b 4096 -C "lebresne@gmail.com"
+ssh-add ~/.ssh/id_rsa
+xclip -sel clip < ~/.ssh/id_rsa.pub
+```
+then go in github account and add it.
+
+Also do:
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee /etc/sysctl.d/40-max-user-watches.conf && sudo sysctl --system
+```
+
+Setup dtests:
+```
+cd Git
+git clone https://github.com/riptano/ccm-private ccm
+git clone https://github.com/riptano/apollo-dtest dtests
+
+mkdir $WORKON_HOME
+mkvirtualenv -p python2 p2
+workon p2
+pip install six pyYaml psutil
+
+cd dtests
+pip install -r requirements.txt
+
+cd ..
+pip install -e ccm
+```

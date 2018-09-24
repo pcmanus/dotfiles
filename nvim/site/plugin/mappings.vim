@@ -3,10 +3,13 @@
 " Author: Sylvain Lebresne <lebresne@gmail.com>
 
 " System clipboard interactions
-noremap <leader>y "*y
+noremap <leader>y "+y
 noremap <leader>p :set paste<CR>"*p<CR>:set nopaste<CR>
 noremap <leader>P :set paste<CR>"*P<CR>:set nopaste<CR>
-vnoremap <leader>y "*ygv
+vnoremap <leader>y "+ygv
+" Copy whole buffer to system clipboard
+nnoremap <Leader>c gg"+yG
+
 
 " Vertical split
 noremap <leader>v <C-w>v
@@ -18,6 +21,10 @@ nnoremap <leader>f :FuzzyOpen .<CR>
 nnoremap <leader>g :FuzzyOpen<CR>
 nnoremap <leader>b :FuzzyBuffers<CR>
 
+" Quick swith to particular modes
+nnoremap <leader>m :call functions#email()<CR>
+nnoremap <leader>j :call functions#jira()<CR>
+
 " Open last buffer.
 nnoremap <Leader><Leader> <C-^>
 nnoremap <Leader>q :quit<CR>
@@ -26,8 +33,6 @@ nnoremap <Leader>x :xit<CR>
 
 " Fix (most) syntax highlighting problems in current buffer (mnemonic: coloring).
 nnoremap <silent> <LocalLeader>c :syntax sync fromstart<CR>
-
-" }}}
 
 " Fuck you, help key.
 noremap  <F1> :set invfullscreen<CR>
@@ -72,7 +77,6 @@ noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 " }}}
 
-
 " List navigation {{{
 nnoremap <left>  :cprev<cr>zvzz
 nnoremap <right> :cnext<cr>zvzz
@@ -83,6 +87,4 @@ nnoremap <down>  :lnext<cr>zvzz
 " Command mode mappings {{{
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
-
-
 " }}}
