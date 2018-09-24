@@ -62,6 +62,8 @@ export JAVA_HOME=/usr/lib/jvm/default
 
 # For dtest
 export JAVA8_HOME=/usr/lib/jvm/java-8-jdk
+export DSE_DIR=/home/pcmanus/Git/dse
+export APOLLO_DIR=$DSE_DIR/dse-db
 
 # i = smart case in searches
 # F = exit immediately if fit one screen
@@ -69,7 +71,7 @@ export JAVA8_HOME=/usr/lib/jvm/java-8-jdk
 # X = suppress alternate screen
 export LESS=iFRX
 
-export PATH=$HOME/.bin:$PATH
+export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
@@ -80,3 +82,10 @@ BASE16_SHELL=$HOME/.config/base16-shell/
 # For the virtualenv wrapper
 export WORKON_HOME=~/.virtualenvs
 source /usr/bin/virtualenvwrapper_lazy.sh
+
+# Alias git to hub
+eval "$(hub alias -s)"
+
+# Can improve JAVA applications looking like crap. But not really needing it right now
+# and Java spit annoying message about picking up this when enabled so disabling for now.
+#export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
