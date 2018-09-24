@@ -3,4 +3,6 @@ if has('autocmd')
     autocmd InsertLeave * set nopaste
 
     autocmd BufWritePost */spell/*.add silent! :mkspell! %
+
+    autocmd BufNewFile,BufRead *.jflex   set syntax=jflex
 endif
