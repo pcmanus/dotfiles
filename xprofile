@@ -1,0 +1,13 @@
+# Network Manager applet
+nm-applet --indicator &
+
+# PulseAudio applet
+pa-applet &
+
+# Bluetooth applet
+blueman-applet &
+
+# Compositor
+picom -b
+
+xbindkeys
