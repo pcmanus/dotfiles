@@ -95,7 +95,7 @@ function install_other()
     install "yaourtrc" ".yaourtrc"
     install "xbindkeysrc" ".xbindkeysrc"
     install "ideavimrc" ".ideavimrc"
-    #install "user-dirs.dirs" ".config/user-dirs.dirs"
+    install "xprofile" ".xprofile"
 
     for i in $CURRENT_DIR/bin/*
     do
