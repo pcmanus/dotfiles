@@ -44,18 +44,13 @@ function install_raw()
 function install_config()
 {
     module=$1
-    for i in $CURRENT_DIR/$module/*
-    do
-        filename=`basename $i`
-        install_raw "$i" "$HOME/$CONFIG_DIR/$module/$filename"
-    done
+    install_raw "$CURRENT_DIR/$module/" "$HOME/$CONFIG_DIR/$module"
 }
 
-function install_vim()
+function install_nvim()
 {
-    echo "Installing vim files..."
-    install "nvim/init.vim" "$CONFIG_DIR/nvim/init.vim"
-    install "nvim/site" ".local/share/nvim/site"
+    echo "Installing neovim files..."
+    install_config "nvim"
 }
 
 function install_zsh()
@@ -64,38 +59,10 @@ function install_zsh()
     install "zsh/zshrc" ".zshrc"
 }
 
-function install_i3()
-{
-    echo "Installing i3 files..."
-    install_config "i3"
-}
-
-function install_rofi()
-{
-    echo "Installing rofi files..."
-    install_config "rofi"
-}
-
-function install_polybar()
-{
-    echo "Installing polybar files..."
-    install_config "polybar"
-}
-
-function install_dunst()
-{
-    echo "Installing dunst files..."
-    install_config "dunst"
-}
-
 function install_other()
 {
     echo "Installing other files..."
     install "wallpaper.png" ".wallpaper.png"
-    install "yaourtrc" ".yaourtrc"
-    install "xbindkeysrc" ".xbindkeysrc"
-    install "ideavimrc" ".ideavimrc"
-    install "xprofile" ".xprofile"
 
     for i in $CURRENT_DIR/bin/*
     do
@@ -108,10 +75,10 @@ function show_help()
 {
     echo  "Usage: $0 [-h] [-v] <command>"
     echo ""
-    echo -e "\t-h: display this help message"
-    echo -e "\t-f: do install files; to avoid mistake, the script default to a dry-run and this force actual installation"
-    echo -e "\t-v: verbose output (show details of what the script actually does)"
-    echo -e "\t<command>: what to install. This can be 'all' to install everything, or a specific thing like 'vim'"
+    echo "\t-h: display this help message"
+    echo "\t-f: do install files; to avoid mistake, the script default to a dry-run and this force actual installation"
+    echo "\t-v: verbose output (show details of what the script actually does)"
+    echo "\t<command>: what to install. This can be 'all' to install everything, or a specific thing like 'vim'"
 }
 
 OPTIND=1 # Used by getopts
@@ -144,33 +111,17 @@ fi
 
 case "$1" in
     vim)
-        install_vim
+        install_nvim
         ;;
     zsh)
         install_zsh
-        ;;
-    polybar)
-        install_polybar
-        ;;
-    rofi)
-        install_rofi
-        ;;
-    dunst)
-        install_dunst
-        ;;
-    i3)
-        install_i3
         ;;
     other)
         install_other
         ;;
     all)
-        install_vim
+        install_nvim
         install_zsh
-        install_rofi
-        install_polybar
-        install_dunst
-        install_i3
         install_other
         ;;
     *)
