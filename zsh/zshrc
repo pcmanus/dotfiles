@@ -1,0 +1,89 @@
+source /opt/homebrew/opt/zplug/init.zsh
+
+# Many additional completion
+zplug "zsh-users/zsh-completions"
+
+# Colored man pages
+zplug "plugins/colored-man-pages", from:oh-my-zsh
+
+# Git aliase & Functions: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git
+zplug "plugins/git", from:oh-my-zsh
+# Faster git completion
+zplug "plugins/gitfast", from:oh-my-zsh
+
+# Adds `node-docs` command to quickly jump to node.js doc
+zplug "plugins/node", from:oh-my-zsh
+# npm completion and a few aliases
+zplug "plugins/npm", from:oh-my-zsh
+# nvm (node version manager) completion (appears to fail)
+# zplug "plugins/nvm", from:oh-my-zsh
+
+# rg completion
+zplug "plugins/ripgrep", from:oh-my-zsh
+
+# rustc completion
+zplug "plugins/rust", from:oh-my-zsh
+# Cargo completion
+zplug "plugins/cargo", from:oh-my-zsh
+
+# Syntax highlighting when typing
+# zsh-syntax-highlighting must be loaded after executing compinit command
+# and sourcing other plugins, which defer:2 does.
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# Then, source plugins and add commands to $PATH
+zplug load #--verbose
+
+# silence please
+setopt nobeep
+setopt noflowcontrol
+
+# Case insensitive completions
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
+
+# Aliases
+
+alias vim=nvim
+alias vi=nvim
+alias ls='ls --color=auto -F'
+
+export EDITOR=nvim
+export VISUAL=nvim
+export TERMINAL=alacritty
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+export NVM_DIR=~/.nvm
+
+
+# i = smart cases in searches
+# F = exit immediately if fit on screen
+# R = AINSI color support
+# X = suppress alternate screen
+export LESS=iFRX
+
+# Replace `find` by `fd` for fzf
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$HOME/.cargo/bin:$PATH"
+export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
+
+test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
+
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval "$(starship init zsh)"
