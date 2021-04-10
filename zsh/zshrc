@@ -26,6 +26,8 @@ zplug "plugins/rust", from:oh-my-zsh
 # Cargo completion
 zplug "plugins/cargo", from:oh-my-zsh
 
+zplug "zsh-users/zsh-autosuggestions"
+
 # Syntax highlighting when typing
 # zsh-syntax-highlighting must be loaded after executing compinit command
 # and sourcing other plugins, which defer:2 does.
@@ -43,12 +45,30 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load #--verbose
 
-# silence please
-setopt nobeep
-setopt noflowcontrol
+
+# Options
+setopt nobeep         # silence please
+stty stop undef       # Disable ctrl-s to freeze terminal.
+setopt noflowcontrol  # Possibly the same thing?
+
+setopt extendedglob   # Extend ~, # and ^
+
+setopt nomatch        # Show errors when a pattern has no match
+
 
 # Case insensitive completions
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
+
+zstyle ':completion:*' menu select  # highlight choice when doing menu completion
+
+
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+zle_highlight=('paste:none')
+
 
 # Aliases
 
@@ -80,6 +100,12 @@ export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$HOME/.cargo/
 export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
 
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
+
+# Keybindings
+bindkey "^p" up-line-or-beginning-search
+bindkey "^n" down-line-or-beginning-search
+
+bindkey "^f" autosuggest-accept
 
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
