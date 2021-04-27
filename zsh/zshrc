@@ -33,6 +33,8 @@ zplug "zsh-users/zsh-autosuggestions"
 # and sourcing other plugins, which defer:2 does.
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
+zplug "softmoth/zsh-vim-mode", defer:2
+
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
@@ -74,7 +76,8 @@ zle_highlight=('paste:none')
 
 alias vim=nvim
 alias vi=nvim
-alias ls='ls --color=auto -F'
+alias ls='exa -F --group-directories-first'
+alias ll='exa -F --group-directories-first -l --icons --git'
 
 export EDITOR=nvim
 export VISUAL=nvim
@@ -84,6 +87,7 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh
 
 
 # i = smart cases in searches
@@ -102,6 +106,8 @@ export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
 
 # Keybindings
+bindkey -v  # vi mode
+
 bindkey "^p" up-line-or-beginning-search
 bindkey "^n" down-line-or-beginning-search
 
