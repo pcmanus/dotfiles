@@ -35,4 +35,8 @@ function utils.smap(lhs, rhs, opts)
     utils.map('s', lhs, rhs, opts)
 end
 
+function utils.xmap(lhs, rhs, opts)
+    utils.map('x', lhs, rhs, opts)
+end
+
 return utils

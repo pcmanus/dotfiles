@@ -4,10 +4,11 @@ local utils = require('utils')
 local cmd = vim.cmd
 local imap = utils.imap
 local nmap = utils.nmap
-local cmap = utils.cmap
+local xmap = utils.xmap
 
 -- Better escaping
 imap('jj', '<Esc>')
+imap('jk', '<Esc>')
 
 -- Write, Quit and Exit shortcuts
 nmap('<Leader>w', ':w!<CR>')
@@ -22,6 +23,9 @@ nmap('<Leader>c', 'gg"+yG')
 
 -- Keep the cursor in place while joining lines
 nmap('J', 'mzJ`z')
+
+-- Paste, replacing what is currently selected, but keep the paste register 
+xmap('<leader>p', '"_dP')
 
 -- Enter and Backspace {{{
 

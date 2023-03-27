@@ -32,8 +32,7 @@ opt('b', 'undofile', true)           -- Saves undos in a file
 
 opt('w', 'signcolumn', 'yes')        -- Always display to avoid "jumps"
 
-vim.o.shortmess = vim.o.shortmess .. 'c'  -- Avoid completion messages
-
+-- vim.o.shortmess = vim.o.shortmess .. 'c'  -- Avoid completion messages
 
 -- Indents {{{
 local indent = 2

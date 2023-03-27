@@ -1,45 +1,63 @@
-if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-        print -P "%F{33} %F{34}Installation successful.%f%b" || \
-        print -P "%F{160} The clone has failed.%f%b"
+source /opt/homebrew/opt/zplug/init.zsh
+
+# Many additional completion
+#zplug "zsh-users/zsh-completions"
+
+# Colored man pages
+zplug "plugins/colored-man-pages", from:oh-my-zsh
+
+# Git aliase & Functions: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git
+zplug "plugins/git", from:oh-my-zsh
+# Faster git completion
+#zplug "plugins/gitfast", from:oh-my-zsh
+
+# npm completion and a few aliases
+zplug "plugins/npm", from:oh-my-zsh
+# nvm (node version manager) completion (appears to fail)
+# zplug "plugins/nvm", from:oh-my-zsh
+
+# rg completion
+zplug "plugins/ripgrep", from:oh-my-zsh
+
+# Cargo completion
+zplug "plugins/cargo", from:oh-my-zsh
+
+#zplug "zsh-users/zsh-autosuggestions"
+
+# Syntax highlighting when typing
+# zsh-syntax-highlighting must be loaded after executing compinit command
+# and sourcing other plugins, which defer:2 does.
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+zplug "softmoth/zsh-vim-mode", defer:2
+
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
 fi
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-# Load a few important annexes, without Turbo (this is currently required for annexes)
-zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
-
-zinit light-mode for \
- atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
-    zdharma-continuum/fast-syntax-highlighting \
- blockf \
-    zsh-users/zsh-completions \
- atload"!_zsh_autosuggest_start" \
-    zsh-users/zsh-autosuggestions
-
-zinit ice as"command" from"gh-r" \
-          atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
-          atpull"%atclone" src"init.zsh"
-zinit light starship/starship
+# Then, source plugins and add commands to $PATH
+zplug load #--verbose
 
 
 # Options
 setopt nobeep         # silence please
 stty stop undef       # Disable ctrl-s to freeze terminal.
 setopt noflowcontrol  # Possibly the same thing?
+
 setopt extendedglob   # Extend ~, # and ^
+
 setopt nomatch        # Show errors when a pattern has no match
+
 
 # Case insensitive completions
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
+
 zstyle ':completion:*' menu select  # highlight choice when doing menu completion
 
 # This allows completion to fall back on file completion when nothing else matches
@@ -69,6 +87,7 @@ export LC_ALL=en_US.UTF-8
 
 export NVM_DIR=~/.nvm
 source $(brew --prefix nvm)/nvm.sh
+source <(npm completion)
 
 
 # i = smart cases in searches
@@ -81,9 +100,7 @@ export LESS=iFRX
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-export JAVA_HOME=/opt/homebrew/Cellar/openjdk/19.0.1
-export PATH="$HOME/Git/lua-language-server/bin/macOS:$HOME/.rover/bin:$HOME/Git/depot_tools:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
-#export PATH="$HOME/Git/lua-language-server/bin/macOS:$HOME/.rover/bin:$HOME/Git/depot_tools:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/Git/lua-language-server/bin/macOS:$HOME/.rover/bin:$HOME/Git/depot_tools:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$HOME/.cargo/bin:$PATH"
 export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
 
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
@@ -101,8 +118,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+eval "$(starship init zsh)"
+
+alias luamake=/Users/pcmanus/Git/lua-language-server/3rd/luamake/luamake
+
 # The next line updates PATH and enable command completion for the Google Cloud SDK.
 if [ -f '/Users/pcmanus/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/path.zsh.inc'; fi
 if [ -f '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc'; fi
 
-[ f ~/.priv.zsh ] && source ~/.priv.zsh
+nerdfetch

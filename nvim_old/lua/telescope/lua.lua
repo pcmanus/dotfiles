@@ -8,9 +8,10 @@ require("telescope").setup {
             "--with-filename",
             "--line-number",
             "--column",
-            "--smart-case"
+            "--smart-case",
+            "--hidden",
+            "--glob=!.git/",
         },
-        prompt_position = "bottom",
         prompt_prefix = " ",
         selection_caret = " ",
         entry_prefix = "  ",
@@ -18,7 +19,8 @@ require("telescope").setup {
         selection_strategy = "reset",
         sorting_strategy = "descending",
         layout_strategy = "horizontal",
-        layout_defaults = {
+        layout_config = {
+            width = 0.75,
             horizontal = {
                 mirror = false,
                 preview_width = 0.5
@@ -30,12 +32,8 @@ require("telescope").setup {
         file_sorter = require "telescope.sorters".get_fuzzy_file,
         file_ignore_patterns = {},
         generic_sorter = require "telescope.sorters".get_generic_fuzzy_sorter,
-        shorten_path = true,
+        path_display = { shorten = 10 },
         winblend = 0,
-        width = 0.75,
-        preview_cutoff = 120,
-        results_height = 1,
-        results_width = 0.8,
         border = {},
         borderchars = {"─", "│", "─", "│", "╭", "╮", "╯", "╰"},
         color_devicons = true,
@@ -49,7 +47,13 @@ require("telescope").setup {
         mappings = {
             i = {
                 ["<C-x>"] = false,
-                ["<C-q>"] = actions.send_to_qflist,
+                ["<C-c>"] = actions.close,
+                ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+            },
+            n = {
+                ["<C-n>"] = actions.move_selection_next,
+                ["<C-p>"] = actions.move_selection_previous,
+                ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
             },
         }
     }
