@@ -86,6 +86,9 @@ require('packer').startup(function(use)
 
   -- Colorizer
   use 'norcalli/nvim-colorizer.lua'
+
+  -- Fancy boxes for renaming/completion/...
+  use 'stevearc/dressing.nvim'
 end)
 
 -- Automatically source and re-compile packer whenever you save this file

@@ -13,7 +13,7 @@ yabai -m config right_padding  2
 yabai -m config window_gap     2
 
 # floating windows are always on top (default: off)
-yabai -m config window_topmost on
+#yabai -m config window_topmost on
 
 yabai -m config window_opacity on
 yabai -m config active_window_opacity 1.0
@@ -21,3 +21,10 @@ yabai -m config normal_window_opacity 0.95
 
 # float system preferences
 yabai -m rule --add app="^System Preferences$" manage=off
+
+# applications with custom rules
+#applications="(Calendar|Mail|Reminders|Notes|Microsoft Outlook|Discord|Messages|Slack|Firefox|Chrome|Code|Microsoft Word|Preview|Terminal|iTerm2|QuickTime|Player|Spotify|Music|Brave Browser|Kitty|Alacritty|Trello)"
+
+# everything listed gets sent to below layer to prevent 
+# them from covering floating applications/popup windows
+#yabai -m rule --add app="^${applications}$" manage=on layer=below
