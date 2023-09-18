@@ -105,4 +105,4 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 if [ -f '/Users/pcmanus/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/path.zsh.inc'; fi
 if [ -f '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc'; fi
 
-[ f ~/.priv.zsh ] && source ~/.priv.zsh
+[ -f ~/.priv.zsh ] && source ~/.priv.zsh
