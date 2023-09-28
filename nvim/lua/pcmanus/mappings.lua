@@ -1,6 +1,3 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
 local opts = { remap = false, silent = true }
 
 -- Better escaping

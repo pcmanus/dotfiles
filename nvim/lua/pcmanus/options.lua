@@ -17,8 +17,6 @@ vim.opt.mouse = 'a'                -- Enable mouse all the time
 vim.opt.list = true                -- Show the characters in listchars
 vim.opt.listchars = 'tab:▸ ,trail:·,extends:❯,precedes:❮'
 
-vim.opt.termguicolors = true       -- It's the 21st century ...
-
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
