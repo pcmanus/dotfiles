@@ -28,9 +28,9 @@ vim.keymap.set('n', '<leader>ll', vim.diagnostic.setloclist, opts)
 
 local servers = {
   rust_analyzer = {},
-  tsserver = {},
-  graphql = {},
-  yamlls = {},
+  --tsserver = {},
+  --graphql = {},
+  --yamlls = {},
 
   lua_ls = {
     Lua = {

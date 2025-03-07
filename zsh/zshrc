@@ -38,6 +38,22 @@ setopt noflowcontrol  # Possibly the same thing?
 setopt extendedglob   # Extend ~, # and ^
 setopt nomatch        # Show errors when a pattern has no match
 
+
+export HISTFILE=~/.zsh_history
+export HISTFILESIZE=1000000000
+export SAVEHIST=10000
+export HISTSIZE=12000
+
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt share_history          # share command history data
+setopt inc_append_history     # Appends every command to the history file once it is executed
+
+
+
 # Case insensitive completions
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
 zstyle ':completion:*' menu select  # highlight choice when doing menu completion
@@ -56,10 +72,11 @@ autoload zmv
 
 # Aliases
 
-alias vim=nvim
-alias vi=nvim
 alias ls='eza -F --group-directories-first'
 alias ll='eza -F --group-directories-first -l --icons --git'
+alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
+alias icat='kitten icat'
+
 
 export EDITOR=nvim
 export VISUAL=nvim
@@ -68,9 +85,9 @@ export TERMINAL=alacritty
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-export NVM_DIR=~/.nvm
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion"
+#export NVM_DIR=~/.nvm
+#[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+#[ -s "/opt/homebrew/opt/nvm/etc/bash_completion" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion"
 
 # i = smart cases in searches
 # F = exit immediately if fit on screen
@@ -83,8 +100,9 @@ export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 #export JAVA_HOME=/opt/homebrew/Cellar/openjdk/19.0.1
-export PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
-export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
+#export PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
+#export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
+export PATH="$HOME/.bin:$PATH"
 
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
 
@@ -95,10 +113,13 @@ bindkey "^p" up-line-or-beginning-search
 bindkey "^n" down-line-or-beginning-search
 
 bindkey "^f" autosuggest-accept
+ 
+bindkey '\e[H' beginning-of-line
+bindkey '\e[F' end-of-line
 
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
-source <(kubectl completion zsh)
+#eval "$(/opt/homebrew/bin/brew shellenv)"
+#source <(kubectl completion zsh)
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -113,3 +134,22 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 export CASSANDRA_USE_JDK11=true
+export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
+
+#(cat /home/pcmanus/.cache/wal/sequences &)
+
+# The next line updates PATH for the Google Cloud SDK.
+#if [ -f '/home/pcmanus/.bin/google-cloud-sdk/path.zsh.inc' ]; then . '/home/pcmanus/.bin/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+#if [ -f '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc'; fi
+
+export KUBECONFIG=kube.yaml
+
+# Avoids having cndb trying to query k8 (and failing) when running locally (integration tests, or storage service mocked mode)
+export CNDB_REGION_NAME="default"
+export CNDB_ZONE_NAME="default"
+
+eval "$(zoxide init --cmd cd zsh)"
+
+source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
