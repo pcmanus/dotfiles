@@ -1,0 +1,4 @@
+font-family = "BerkeleyMono Nerd Font Mono"
+
+gtk-single-instance = true
+link-url = true
