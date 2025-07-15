@@ -1,20 +1,15 @@
 -- Diagnostics
 
-local sign = function(opts)
-  vim.fn.sign_define(opts.name, {
-    texthl = opts.name,
-    text = opts.text,
-    numhl = ''
-  })
-end
-
-sign({name = 'DiagnosticSignError', text = ''})
-sign({name = 'DiagnosticSignWarn', text = ''})
-sign({name = 'DiagnosticSignHint', text = ''})
-sign({name = 'DiagnosticSignInfo', text = ''})
-
 vim.diagnostic.config({
-    virtual_text = true,
+  virtual_text = true,
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.INFO] = '',
+      [vim.diagnostic.severity.HINT] = '',
+    }
+  }
 })
 
 local opts = { remap = true, silent = true }
@@ -25,20 +20,6 @@ vim.keymap.set('n', '<leader>ll', vim.diagnostic.setloclist, opts)
 
 
 -- LSP proper
-
-local servers = {
-  rust_analyzer = {},
-  --tsserver = {},
-  --graphql = {},
-  --yamlls = {},
-
-  lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
-}
 
 local on_attach = function(_, bufnr)
   local nmap = function(keys, func, desc)
@@ -79,24 +60,35 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+vim.lsp.config("lua_ls", {
+  settings = {
+    Lua = {
+      runtime = {
+        version = "LuaJIT",
+      },
+      diagnostics = {
+        globals = { "vim" }
+      },
+      workspace = {
+        checkThirdParty = false,
+        library = vim.api.nvim_get_runtime_file("", true)
+      },
+      telemetry = { enable = false },
+    },
+  }
+})
+
+vim.lsp.config("*", {
+  capabilities = capabilities,
+  on_attach = on_attach,
+})
+
 -- Setup mason so it can manage external tooling
 require('mason').setup()
 
 -- Ensure the servers above are installed
-local mason_lspconfig = require('mason-lspconfig')
-
-mason_lspconfig.setup({
-  ensure_installed = vim.tbl_keys(servers),
-})
-
-mason_lspconfig.setup_handlers({
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
+require('mason-lspconfig').setup({
+  ensure_installed = { "lua_ls" },
 })
 
 -- Turn on lsp status information

@@ -102,7 +102,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #export JAVA_HOME=/opt/homebrew/Cellar/openjdk/19.0.1
 #export PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
 #export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
-export PATH="$HOME/.bin:$PATH"
+export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$PATH"
 
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
 
@@ -152,4 +152,4 @@ export CNDB_ZONE_NAME="default"
 
 eval "$(zoxide init --cmd cd zsh)"
 
-source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
+#source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
