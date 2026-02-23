@@ -1,5 +1,5 @@
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+#    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"TH
     command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
     command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
         print -P "%F{33} %F{34}Installation successful.%f%b" || \
@@ -80,14 +80,10 @@ alias icat='kitten icat'
 
 export EDITOR=nvim
 export VISUAL=nvim
-export TERMINAL=alacritty
+export TERMINAL=~/.bin/ghostty
 
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-
-#export NVM_DIR=~/.nvm
-#[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-#[ -s "/opt/homebrew/opt/nvm/etc/bash_completion" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion"
 
 # i = smart cases in searches
 # F = exit immediately if fit on screen
@@ -102,7 +98,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #export JAVA_HOME=/opt/homebrew/Cellar/openjdk/19.0.1
 #export PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
 #export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
-export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$PATH"
+export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$HOME/go/bin:$PATH"
 
 test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
 
@@ -129,10 +125,6 @@ bindkey '\e[F' end-of-line
 
 [ -f ~/.priv.zsh ] && source ~/.priv.zsh
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
 export CASSANDRA_USE_JDK11=true
 export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
 
@@ -144,7 +136,6 @@ export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
 # The next line enables shell command completion for gcloud.
 #if [ -f '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc'; fi
 
-export KUBECONFIG=kube.yaml
 
 # Avoids having cndb trying to query k8 (and failing) when running locally (integration tests, or storage service mocked mode)
 export CNDB_REGION_NAME="default"
@@ -152,4 +143,16 @@ export CNDB_ZONE_NAME="default"
 
 eval "$(zoxide init --cmd cd zsh)"
 
+export KUBECONFIG=kube.yaml
 #source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+source $HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh
