@@ -1,12 +1,6 @@
 [user]
 	name = Sylvain Lebresne
 	email = lebresne@gmail.com
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
 [init]
 	defaultBranch = main
 [alias]
@@ -20,8 +14,6 @@
 	enabled = true
 [branch]
 	sort = -committerdate
-[maintenance]
-	repo = /home/pcmanus/Git/cndb
 [push]
 	autoSetupRemote = true
 [core]
