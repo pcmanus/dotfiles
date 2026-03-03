@@ -30,22 +30,9 @@ return {
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-nvim-lua',
-      'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
       'rafamadriz/friendly-snippets',
     },
-  },
-
-  -- Highlight, edit, and navigate code
-  {
-    'nvim-treesitter/nvim-treesitter',
-    build = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
-    end,
-    dependencies = {
-      -- Additional text objects via treesitter
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    }
   },
 
   -- Fancier statusline
@@ -75,4 +62,10 @@ return {
 
   -- Fancy boxes for renaming/completion/...
   'stevearc/dressing.nvim',
+
+    {
+    "mrcjkb/rustaceanvim",
+    version = "^5", -- follow the plugin's recommended major version
+    ft = { "rust" },
+  },
 }

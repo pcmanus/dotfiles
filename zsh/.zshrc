@@ -76,6 +76,9 @@ alias ls='eza -F --group-directories-first'
 alias ll='eza -F --group-directories-first -l --icons --git'
 alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
 alias icat='kitten icat'
+alias vim='nvim'
+# The space ensures alias expands after sudo
+alias sudo='sudo '
 
 
 export EDITOR=nvim
@@ -155,4 +158,4 @@ export SDKMAN_DIR="$HOME/.sdkman"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-source $HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh
+[[ -s '$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh' ]] && source "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
