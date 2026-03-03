@@ -1,0 +1,56 @@
+config-version = 2
+
+[key-mapping]
+preset = 'qwerty'
+
+[mode.main.binding]
+# --- Launch terminal (Ghostty) ---
+# exec-and-forget exists specifically for launching external commands. :contentReference[oaicite:1]{index=1}
+#cmd-e = 'exec-and-forget /Applications/Ghostty.app/Contents/MacOS/ghostty +new-window'
+cmd-e = '''
+exec-and-forget osascript -e '
+  tell application "Ghostty" to activate
+  delay 0.05
+  tell application "System Events" to tell process "Ghostty"
+    click menu item "New Window" of menu "File" of menu bar 1
+  end tell
+'
+'''
+
+# --- Move focus across windows (vim keys) ---
+cmd-h = 'focus left'
+cmd-j = 'focus down'
+cmd-k = 'focus up'
+cmd-l = 'focus right'
+
+# --- Move windows (change their tiling position in the tree) ---
+cmd-shift-h = 'move left'
+cmd-shift-j = 'move down'
+cmd-shift-k = 'move up'
+cmd-shift-l = 'move right'
+
+# --- Workspaces: switch ---
+cmd-1 = 'workspace --auto-back-and-forth 1'
+cmd-2 = 'workspace --auto-back-and-forth 2'
+cmd-3 = 'workspace --auto-back-and-forth 3'
+cmd-4 = 'workspace --auto-back-and-forth 4'
+cmd-5 = 'workspace --auto-back-and-forth 5'
+cmd-6 = 'workspace --auto-back-and-forth 6'
+cmd-7 = 'workspace --auto-back-and-forth 7'
+cmd-8 = 'workspace --auto-back-and-forth 8'
+cmd-9 = 'workspace --auto-back-and-forth 9'
+
+# --- Workspaces: send focused window to workspace (and follow it) ---
+# move-node-to-workspace supports --focus-follows-window. :contentReference[oaicite:2]{index=2}
+cmd-shift-1 = 'move-node-to-workspace 1 --focus-follows-window'
+cmd-shift-2 = 'move-node-to-workspace 2 --focus-follows-window'
+cmd-shift-3 = 'move-node-to-workspace 3 --focus-follows-window'
+cmd-shift-4 = 'move-node-to-workspace 4 --focus-follows-window'
+cmd-shift-5 = 'move-node-to-workspace 5 --focus-follows-window'
+cmd-shift-6 = 'move-node-to-workspace 6 --focus-follows-window'
+cmd-shift-7 = 'move-node-to-workspace 7 --focus-follows-window'
+cmd-shift-8 = 'move-node-to-workspace 8 --focus-follows-window'
+cmd-shift-9 = 'move-node-to-workspace 9 --focus-follows-window'
+
+# --- Convenience ---
+alt-shift-r = 'reload-config'
