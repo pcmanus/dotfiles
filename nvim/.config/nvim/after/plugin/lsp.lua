@@ -54,7 +54,12 @@ local on_attach = function(_, bufnr)
 end
 
 
-require('neodev').setup()
+require('lazydev').setup({
+  library = {
+    -- Load luvit definitions when `vim.uv` is used.
+    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+  },
+})
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -63,17 +68,9 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
-      runtime = {
-        version = "LuaJIT",
+      completion = {
+        callSnippet = "Replace",
       },
-      diagnostics = {
-        globals = { "vim" }
-      },
-      workspace = {
-        checkThirdParty = false,
-        library = vim.api.nvim_get_runtime_file("", true)
-      },
-      telemetry = { enable = false },
     },
   }
 })
