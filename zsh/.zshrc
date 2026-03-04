@@ -1,46 +1,43 @@
-if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-#    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"TH
-    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-        print -P "%F{33} %F{34}Installation successful.%f%b" || \
-        print -P "%F{160} The clone has failed.%f%b"
+ANTIDOTE_HOME="$HOME/.local/share/antidote"
+if [[ ! -f "$ANTIDOTE_HOME/antidote.zsh" ]]; then
+  command mkdir -p "${ANTIDOTE_HOME:h}"
+  command git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_HOME" && \
+    print -P "%F{33} %F{34}Antidote installed.%f%b" || \
+    print -P "%F{160} Antidote install failed.%f%b"
 fi
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
+if [[ -f "$ANTIDOTE_HOME/antidote.zsh" ]]; then
+  source "$ANTIDOTE_HOME/antidote.zsh"
+  zsh_plugins="${ZDOTDIR:-$HOME}/.zsh_plugins"
+  if [[ ! -f "${zsh_plugins}.txt" ]]; then
+    cat >| "${zsh_plugins}.txt" <<'EOF'
+zsh-users/zsh-completions path:src kind:fpath
+zsh-users/zsh-autosuggestions
+zdharma-continuum/fast-syntax-highlighting
+EOF
+  fi
+  if [[ ! -s "${zsh_plugins}.zsh" || ! "${zsh_plugins}.zsh" -nt "${zsh_plugins}.txt" ]]; then
+    antidote bundle <"${zsh_plugins}.txt" >| "${zsh_plugins}.zsh"
+  fi
+  source "${zsh_plugins}.zsh"
+else
+  print -P "%F{160} Antidote not available, plugins not loaded.%f%b"
+fi
 
-# Load a few important annexes, without Turbo (this is currently required for annexes)
-zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
-
-zinit light-mode for \
- atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
-    zdharma-continuum/fast-syntax-highlighting \
- blockf \
-    zsh-users/zsh-completions \
- atload"!_zsh_autosuggest_start" \
-    zsh-users/zsh-autosuggestions
-
-zinit ice as"command" from"gh-r" \
-          atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
-          atpull"%atclone" src"init.zsh"
-zinit light starship/starship
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 
 # Options
 setopt nobeep         # silence please
-stty stop undef       # Disable ctrl-s to freeze terminal.
-setopt noflowcontrol  # Possibly the same thing?
+[[ -t 0 ]] && stty stop undef  # Disable ctrl-s terminal flow control in interactive sessions.
+setopt noflowcontrol
+unsetopt bgnice      # Avoid sandbox/CI warnings when tools spawn background jobs.
 setopt extendedglob   # Extend ~, # and ^
-setopt nomatch        # Show errors when a pattern has no match
 
 
 export HISTFILE=~/.zsh_history
-export HISTFILESIZE=1000000000
 export SAVEHIST=10000
 export HISTSIZE=12000
 
@@ -60,6 +57,7 @@ zstyle ':completion:*' menu select  # highlight choice when doing menu completio
 
 # This allows completion to fall back on file completion when nothing else matches
 zstyle :completion::::: completer _complete _files
+autoload -Uz compinit && compinit -C
 
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -103,7 +101,9 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
 export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$HOME/go/bin:$PATH"
 
-test -e ~/.dircolors && eval `dircolors -b ~/.dircolors`
+if command -v dircolors >/dev/null 2>&1 && [[ -e ~/.dircolors ]]; then
+  eval "$(dircolors -b ~/.dircolors)"
+fi
 
 # Keybindings
 bindkey -v  # vi mode
@@ -144,7 +144,9 @@ export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
 export CNDB_REGION_NAME="default"
 export CNDB_ZONE_NAME="default"
 
-eval "$(zoxide init --cmd cd zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
 
 export KUBECONFIG=kube.yaml
 #source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
@@ -153,11 +155,8 @@ export KUBECONFIG=kube.yaml
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[[ -s "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh" ]] && source "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-[[ -s '$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh' ]] && source "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
-
-eval "$(fnm env --use-on-cd)"
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
