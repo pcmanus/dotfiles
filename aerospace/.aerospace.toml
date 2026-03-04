@@ -7,16 +7,55 @@ preset = 'qwerty'
 # --- Launch terminal (Ghostty) ---
 # exec-and-forget exists specifically for launching external commands. :contentReference[oaicite:1]{index=1}
 #cmd-e = 'exec-and-forget /Applications/Ghostty.app/Contents/MacOS/ghostty +new-window'
+#cmd-e = '''
+#exec-and-forget osascript -e '
+#  tell application "Ghostty" to activate
+#  delay 0.05
+#  tell application "System Events" to tell process "Ghostty"
+#    click menu item "New Window" of menu "File" of menu bar 1
+#  end tell
+#'
+#'''
 cmd-e = '''
-exec-and-forget osascript -e '
-  tell application "Ghostty" to activate
-  delay 0.05
-  tell application "System Events" to tell process "Ghostty"
-    click menu item "New Window" of menu "File" of menu bar 1
-  end tell
+exec-and-forget /bin/bash -lc '
+  set -euo pipefail
+
+  current_ws="$(aerospace list-workspaces --focused)"
+
+  get_ghostty_ids() {
+    aerospace list-windows --all \
+      | awk -F " *\\| *" '\''$2 == "Ghostty" {print $1}'\'' \
+      | sort
+  }
+
+  before="$(get_ghostty_ids)"
+
+  # Your existing AppleScript to create a new window
+  osascript -e '\''tell application "Ghostty" to activate
+    delay 0.05
+    tell application "System Events" to tell process "Ghostty"
+      click menu item "New Window" of menu "File" of menu bar 1
+    end tell
+  '\''
+
+  # Wait a bit for the new window to exist, then diff IDs
+  new_id=""
+  for _ in $(seq 1 40); do
+    after="$(get_ghostty_ids)"
+    new_id="$(comm -13 <(printf "%s\n" "$before") <(printf "%s\n" "$after") | head -n1 || true)"
+    [ -n "$new_id" ] && break
+    sleep 0.05
+  done
+
+  # If we found the new window, bring it back to where we started and follow it
+  if [ -n "$new_id" ]; then
+    aerospace move-node-to-workspace --window-id "$new_id" --focus-follows-window "$current_ws"
+  else
+    # Fallback: at least return to where we were
+    aerospace workspace "$current_ws"
+  fi
 '
 '''
-
 # --- Move focus across windows (vim keys) ---
 cmd-h = 'focus left'
 cmd-j = 'focus down'

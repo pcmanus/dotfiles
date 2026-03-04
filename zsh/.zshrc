@@ -159,3 +159,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [[ -s '$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh' ]] && source "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
+
+eval "$(fnm env --use-on-cd)"
