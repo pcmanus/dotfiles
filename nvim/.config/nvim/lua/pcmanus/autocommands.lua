@@ -12,18 +12,17 @@ local function on_filetype(ft, cb)
 end
 
 on_filetype('typescript', function()
-  vim.cmd [[setlocal foldmethod=indent]]
-  vim.cmd [[setlocal foldlevel=0]]
-  vim.cmd [[setlocal foldnestmax]]
-  vim.cmd [[setlocal foldenable]]
+  vim.opt_local.foldmethod = 'indent'
+  vim.opt_local.foldlevel = 0
+  vim.opt_local.foldenable = true
 end)
 
 autocmd({'BufNewFile', 'BufRead'}, {
   group = init_lua_augroup,
   pattern = '*.md',
   callback = function ()
-    vim.cmd [[setlocal spell]]
-    vim.cmd [[setlocal textwidth=120]]
+    vim.opt_local.spell = true
+    vim.opt_local.textwidth = 120
   end
 })
 

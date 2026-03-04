@@ -53,12 +53,10 @@ return {
   'lewis6991/gitsigns.nvim',
 
   -- Devicons
-  'kyazdani42/nvim-web-devicons',
-  'ryanoasis/vim-devicons',
-  'yamatsum/nvim-web-nonicons',
+  'nvim-tree/nvim-web-devicons',
 
   -- Colorizer
-  'norcalli/nvim-colorizer.lua',
+  'catgoose/nvim-colorizer.lua',
 
   -- Fancy boxes for renaming/completion/...
   'stevearc/dressing.nvim',

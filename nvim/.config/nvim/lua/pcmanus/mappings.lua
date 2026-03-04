@@ -43,7 +43,7 @@ vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', opts)
 
 -- Make the current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+vim.keymap.set("n", "<leader>X", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make file executable" })
 
 -- Open netrw
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
