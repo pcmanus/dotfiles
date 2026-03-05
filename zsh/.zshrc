@@ -50,7 +50,6 @@ setopt share_history          # share command history data
 setopt inc_append_history     # Appends every command to the history file once it is executed
 
 
-
 # Case insensitive completions
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
 zstyle ':completion:*' menu select  # highlight choice when doing menu completion
@@ -96,9 +95,6 @@ export LESS=iFRX
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-#export JAVA_HOME=/opt/homebrew/Cellar/openjdk/19.0.1
-#export PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$HOME/.bin:$PATH"
-#export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnuman:$MANPATH"
 export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$HOME/go/bin:$PATH"
 
 if command -v dircolors >/dev/null 2>&1 && [[ -e ~/.dircolors ]]; then
@@ -117,41 +113,18 @@ bindkey '\e[H' beginning-of-line
 bindkey '\e[F' end-of-line
 
 
-#eval "$(/opt/homebrew/bin/brew shellenv)"
-#source <(kubectl completion zsh)
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# The next line updates PATH and enable command completion for the Google Cloud SDK.
-#if [ -f '/Users/pcmanus/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/path.zsh.inc'; fi
-#if [ -f '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/pcmanus/google-cloud-sdk/completion.zsh.inc'; fi
-
+[ -f ~/.fzf-git.sh ] && source ~/.fzf-git.sh
 [ -f ~/.priv.zsh ] && source ~/.priv.zsh
 
 export CASSANDRA_USE_JDK11=true
 export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
-
-#(cat /home/pcmanus/.cache/wal/sequences &)
-
-# The next line updates PATH for the Google Cloud SDK.
-#if [ -f '/home/pcmanus/.bin/google-cloud-sdk/path.zsh.inc' ]; then . '/home/pcmanus/.bin/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-#if [ -f '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/pcmanus/.bin/google-cloud-sdk/completion.zsh.inc'; fi
-
-
-# Avoids having cndb trying to query k8 (and failing) when running locally (integration tests, or storage service mocked mode)
-export CNDB_REGION_NAME="default"
-export CNDB_ZONE_NAME="default"
 
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
 export KUBECONFIG=kube.yaml
-#source "/home/pcmanus/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
