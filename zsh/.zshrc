@@ -69,8 +69,8 @@ autoload zmv
 
 # Aliases
 
-alias ls='eza -F --group-directories-first'
-alias ll='eza -F --group-directories-first -l --icons --git'
+alias ls='eza -F --group-directories-first --icons'
+alias ll='eza -F --group-directories-first -l --icons --git --icons'
 alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
 alias icat='kitten icat'
 alias vim='nvim'
