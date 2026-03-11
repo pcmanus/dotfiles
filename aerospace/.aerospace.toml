@@ -1,5 +1,7 @@
 config-version = 2
 
+start-at-login = true
+
 [key-mapping]
 preset = 'qwerty'
 
@@ -79,17 +81,16 @@ cmd-7 = 'workspace --auto-back-and-forth 7'
 cmd-8 = 'workspace --auto-back-and-forth 8'
 cmd-9 = 'workspace --auto-back-and-forth 9'
 
-# --- Workspaces: send focused window to workspace (and follow it) ---
-# move-node-to-workspace supports --focus-follows-window. :contentReference[oaicite:2]{index=2}
-cmd-shift-1 = 'move-node-to-workspace 1 --focus-follows-window'
-cmd-shift-2 = 'move-node-to-workspace 2 --focus-follows-window'
-cmd-shift-3 = 'move-node-to-workspace 3 --focus-follows-window'
-cmd-shift-4 = 'move-node-to-workspace 4 --focus-follows-window'
-cmd-shift-5 = 'move-node-to-workspace 5 --focus-follows-window'
-cmd-shift-6 = 'move-node-to-workspace 6 --focus-follows-window'
-cmd-shift-7 = 'move-node-to-workspace 7 --focus-follows-window'
-cmd-shift-8 = 'move-node-to-workspace 8 --focus-follows-window'
-cmd-shift-9 = 'move-node-to-workspace 9 --focus-follows-window'
+# --- Workspaces: send focused window to workspace ---
+cmd-shift-1 = 'move-node-to-workspace 1'
+cmd-shift-2 = 'move-node-to-workspace 2'
+cmd-shift-3 = 'move-node-to-workspace 3'
+cmd-shift-4 = 'move-node-to-workspace 4'
+cmd-shift-5 = 'move-node-to-workspace 5'
+cmd-shift-6 = 'move-node-to-workspace 6'
+cmd-shift-7 = 'move-node-to-workspace 7'
+cmd-shift-8 = 'move-node-to-workspace 8'
+cmd-shift-9 = 'move-node-to-workspace 9'
 
 # --- Convenience ---
 alt-shift-r = 'reload-config'
