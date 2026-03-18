@@ -12,46 +12,50 @@ vim.diagnostic.config({
   }
 })
 
-local opts = { remap = true, silent = true }
-vim.keymap.set('n', '<C-p>', vim.diagnostic.goto_prev, opts)
-vim.keymap.set('n', '<C-n>', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '<leader>ll', vim.diagnostic.setloclist, opts)
+local diag_opts = { silent = true }
+vim.keymap.set('n', '<C-p>', function() vim.diagnostic.jump({ count = -1 }) end, diag_opts)
+vim.keymap.set('n', '<C-n>', function() vim.diagnostic.jump({ count = 1 }) end, diag_opts)
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, diag_opts)
+vim.keymap.set('n', '<leader>ll', vim.diagnostic.setloclist, diag_opts)
 
 
 -- LSP proper
 
-local on_attach = function(_, bufnr)
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspConfig', { clear = true }),
+  callback = function(ev)
+    local bufnr = ev.buf
+    local nmap = function(keys, func, desc)
+      if desc then
+        desc = 'LSP: ' .. desc
+      end
+
+      vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc, remap = false, silent = true })
     end
 
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc, remap = false, silent = true })
-  end
+    nmap('<leader>r', vim.lsp.buf.rename, '[R]ename')
+    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-  nmap('<leader>r', vim.lsp.buf.rename, '[R]ename')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    nmap('<CR>', vim.lsp.buf.definition, 'Goto Definition')
+    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+    nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
 
-  nmap('<CR>', vim.lsp.buf.definition, 'Goto Definition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+    -- K -> hover is set by neovim's runtime on LspAttach by default
+    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+    -- Create a command `:Format` local to the LSP buffer
+    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+      vim.lsp.buf.format()
+    end, { desc = 'Format current buffer with LSP' })
 
-  -- Create a command `:Format` local to the LSP buffer
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
-
-  nmap('<leader>wl', function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, '[W]orkspace [L]ist Folders')
-end
+    nmap('<leader>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, '[W]orkspace [L]ist Folders')
+  end,
+})
 
 
 require('lazydev').setup({
@@ -77,7 +81,6 @@ vim.lsp.config("lua_ls", {
 
 vim.lsp.config("*", {
   capabilities = capabilities,
-  on_attach = on_attach,
 })
 
 -- Setup mason so it can manage external tooling
@@ -142,7 +145,6 @@ cmp.setup({
 require('crates').setup {
     lsp = {
         enabled = true,
-        on_attach = on_attach,
         actions = true,
         completion = true,
         hover = true,

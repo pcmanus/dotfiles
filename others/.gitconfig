@@ -17,6 +17,6 @@
 [push]
 	autoSetupRemote = true
 [core]
-	excludesfile = /home/pcmanus/.gitignore
+	excludesfile = /Users/pcmanus/.gitignore
 [pull]
 	rebase = true
