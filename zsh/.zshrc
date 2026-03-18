@@ -166,3 +166,5 @@ alias venv="uv venv"
 alias pip="uv pip"
 #export UV_PYTHON=3.14
 #alias python="uv run python"
+
+[[ -s "$HOME/.config/zsh/worktree.zsh" ]] && source "$HOME/.config/zsh/worktree.zsh"
