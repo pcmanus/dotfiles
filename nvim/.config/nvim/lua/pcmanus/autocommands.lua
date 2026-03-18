@@ -26,6 +26,13 @@ autocmd({'BufNewFile', 'BufRead'}, {
   end
 })
 
+-- Check for external file changes on focus/buffer switch
+autocmd({ 'FocusGained', 'BufEnter' }, {
+  group = init_lua_augroup,
+  pattern = '*',
+  command = 'checktime'
+})
+
 -- Save when losing focus
 autocmd({'FocusLost'}, {
   group = init_lua_augroup,

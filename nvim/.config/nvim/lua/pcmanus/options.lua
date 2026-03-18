@@ -5,6 +5,7 @@ vim.opt.showmode = false           -- Don't show --INSERT-- below the status lin
 vim.opt.wrap = false               -- Wrapping is for loosers
 
 vim.opt.autowrite = true           -- Save files in many cases.
+vim.opt.autoread = true            -- Reload files changed outside of vim
 
 vim.opt.splitbelow = true          -- Split horizontally below
 vim.opt.splitright = true          -- Split vertically right
