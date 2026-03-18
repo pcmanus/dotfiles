@@ -71,11 +71,12 @@ autoload zmv
 
 alias ls='eza -F --group-directories-first --icons'
 alias ll='eza -F --group-directories-first -l --icons --git --icons'
-alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
-alias icat='kitten icat'
+#alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
+#alias icat='kitten icat'
 alias vim='nvim'
 # The space ensures alias expands after sudo
 alias sudo='sudo '
+alias cat='bat'
 
 
 export EDITOR=nvim
@@ -95,7 +96,7 @@ export LESS=iFRX
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-export PATH="$HOME/.bin:$HOME/.local/share/soar/bin:$HOME/go/bin:$PATH"
+export PATH="$HOME/.bin:$HOME/.local/bin:$HOME/.local/share/soar/bin:$HOME/go/bin:$PATH"
 
 if command -v dircolors >/dev/null 2>&1 && [[ -e ~/.dircolors ]]; then
   eval "$(dircolors -b ~/.dircolors)"
@@ -133,3 +134,35 @@ export SDKMAN_DIR="$HOME/.sdkman"
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
+
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+# Neovim as MANPAGER
+export MANPAGER='nvim +Man!'
+
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+export FZF_CTRL_T_OPTS="
+  --preview 'bat -n --color=always {}'
+  --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+export FZF_DEFAULT_COMMAND='rg --hidden -l ""' # Include hidden files
+
+export BAT_THEME=Nord
+
+autoload -U add-zsh-hook
+
+load-venv() {
+  if [[ -f ".venv/bin/activate" ]]; then
+    source .venv/bin/activate >/dev/null 2>&1
+  fi
+}
+
+add-zsh-hook chpwd load-venv
+load-venv
+
+alias venv="uv venv"
+alias pip="uv pip"
+#export UV_PYTHON=3.14
+#alias python="uv run python"

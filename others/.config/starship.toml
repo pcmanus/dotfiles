@@ -1,33 +1,92 @@
+format = """
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$python\
+$lua\
+$nodejs\
+$golang\
+$haskell\
+$rust\
+$ruby\
+$aws\
+$docker_context\
+$jobs\
+$cmd_duration\
+${custom.wprofile}\
+$line_break\
+$character"""
+
+add_newline = true
+palette = "nord"
+
 [directory]
 truncate_to_repo = false
 read_only = ' '
 truncation_length = 10
 truncation_symbol = '…/'
+style = 'bold fg:dark_blue'
+format = '[$path ]($style)'
 
 [directory.substitutions]
-"~/Documents" = ""
-"~/Downloads" = ""
-"~/Music" = ""
-"~/Pictures" = ""
+'~/Documents' = '󰈙'
+'~/Downloads' = ' '
+'~/Music' = ' '
+'~/Pictures' = ' '
 "~/Git" = ""
-
-[git_branch]
-symbol = " "
 
 [git_metrics]
 disabled = false
 
+[git_branch]
+style = 'fg:green'
+symbol = ' '
+format = '[on](white) [$symbol$branch ]($style)'
+
 [git_status]
-stashed = ''
+style = 'fg:red'
+format = '([$all_status$ahead_behind]($style) )'
+
+[fill]
+symbol = ' '
 
 [rust]
-symbol = ""
+style = 'orange'
+symbol = ' '
+
+[jobs]
+symbol = ' '
+style = 'red'
+number_threshold = 1
+format = '[$symbol]($style)'
 
 [gcloud]
 disabled = true
+
+[custom.wprofile]
+command = 'printf "[%s]" "$WPROFILE"'
+when = '[[ -n "$WPROFILE" ]]'
+shell = ["zsh", "--no-rcs"]
+format = "[$output]($style) "
+style = "bold yellow"
 
 # 
 
 # 
 # 
 # 
+
+[palettes.nord]
+dark_blue = '#5E81AC'
+blue = '#81A1C1'
+teal = '#88C0D0'
+red = '#BF616A'
+orange = '#D08770'
+green = '#A3BE8C'
+yellow = '#EBCB8B'
+purple = '#B48EAD'
+gray = '#434C5E'
+black = '#2E3440'
+white='#D8DEE9'
+

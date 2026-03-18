@@ -1,59 +1,45 @@
 config-version = 2
 
 start-at-login = true
+automatically-unhide-macos-hidden-apps = true
 
 [key-mapping]
 preset = 'qwerty'
 
 [mode.main.binding]
 # --- Launch terminal (Ghostty) ---
-# exec-and-forget exists specifically for launching external commands. :contentReference[oaicite:1]{index=1}
-#cmd-e = 'exec-and-forget /Applications/Ghostty.app/Contents/MacOS/ghostty +new-window'
-#cmd-e = '''
-#exec-and-forget osascript -e '
-#  tell application "Ghostty" to activate
-#  delay 0.05
-#  tell application "System Events" to tell process "Ghostty"
-#    click menu item "New Window" of menu "File" of menu bar 1
-#  end tell
-#'
-#'''
 cmd-e = '''
 exec-and-forget /bin/bash -lc '
-  set -euo pipefail
+  set -u
 
   current_ws="$(aerospace list-workspaces --focused)"
 
   get_ghostty_ids() {
-    aerospace list-windows --all \
-      | awk -F " *\\| *" '\''$2 == "Ghostty" {print $1}'\'' \
-      | sort
+    aerospace list-windows --all --format "%{window-id}|%{app-name}" \
+      | awk -F"|" '\''$2 == "Ghostty" { print $1 }'\'' \
+      | sort -n
   }
 
   before="$(get_ghostty_ids)"
 
-  # Your existing AppleScript to create a new window
-  osascript -e '\''tell application "Ghostty" to activate
-    delay 0.05
-    tell application "System Events" to tell process "Ghostty"
-      click menu item "New Window" of menu "File" of menu bar 1
-    end tell
-  '\''
+  osascript \
+    -e '\''tell application "Ghostty"'\'' \
+    -e '\''new window'\'' \
+    -e '\''end tell'\'' >/dev/null 2>&1
 
-  # Wait a bit for the new window to exist, then diff IDs
   new_id=""
-  for _ in $(seq 1 40); do
+  i=0
+  while [ "$i" -lt 40 ]; do
     after="$(get_ghostty_ids)"
-    new_id="$(comm -13 <(printf "%s\n" "$before") <(printf "%s\n" "$after") | head -n1 || true)"
+    new_id="$(comm -13 <(printf "%s\n" "$before") <(printf "%s\n" "$after") | head -n1)"
     [ -n "$new_id" ] && break
     sleep 0.05
+    i=$((i + 1))
   done
 
-  # If we found the new window, bring it back to where we started and follow it
   if [ -n "$new_id" ]; then
     aerospace move-node-to-workspace --window-id "$new_id" --focus-follows-window "$current_ws"
   else
-    # Fallback: at least return to where we were
     aerospace workspace "$current_ws"
   fi
 '
@@ -94,3 +80,8 @@ cmd-shift-9 = 'move-node-to-workspace 9'
 
 # --- Convenience ---
 alt-shift-r = 'reload-config'
+
+[gaps]
+
+inner.horizontal = 4
+inner.vertical = 4

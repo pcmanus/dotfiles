@@ -89,8 +89,7 @@ require('mason-lspconfig').setup({
 })
 
 -- Turn on lsp status information
-require('fidget').setup()
-
+require('fidget').setup({})
 
 -- Completion
 local cmp = require('cmp')
@@ -135,5 +134,49 @@ cmp.setup({
     { name = 'path' },
     { name = 'nvim_lsp' },
     { name = 'buffer' },
+    { name = 'crates' },
   },
 })
+
+-- Crates: for Cargo.toml completions
+require('crates').setup {
+    lsp = {
+        enabled = true,
+        on_attach = on_attach,
+        actions = true,
+        completion = true,
+        hover = true,
+    },
+    -- cmp = {
+    --   enabled = true
+    -- },
+}
+
+
+-- Python
+-- basedpyright: type checking, goto definition, rename, references, etc.
+vim.lsp.config("basedpyright", {
+  settings = {
+    basedpyright = {
+      analysis = {
+        typeCheckingMode = "off",
+        autoSearchPaths = true,
+        diagnosticMode = "openFilesOnly",
+        useLibraryCodeForTypes = true,
+      },
+    },
+  },
+})
+
+vim.lsp.enable("basedpyright")
+
+-- Ruff: linting + formatting
+--vim.lsp.config("ruff", {
+--  init_options = {
+--    settings = {
+--      -- Keep config in pyproject.toml / ruff.toml when possible
+--    },
+--  },
+--})
+--
+--vim.lsp.enable("ruff")

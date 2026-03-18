@@ -1,8 +1,18 @@
 font-family = "BerkeleyMono Nerd Font Mono"
+font-thicken = true
+font-thicken-strength = 0
 
-# gtk-single-instance = true
-# link-url = true
+# Cursor
+cursor-style = bar
+cursor-style-blink = true
+cursor-color = #A3BE8C
+mouse-hide-while-typing = true
 
-# command = /usr/bin/zsh --login --interactive
+# Window
+macos-titlebar-style = hidden
+confirm-close-surface = false
 
-# gtk-titlebar = false
+# Padding (left, right, top, bottom → x/y in Ghostty)
+window-padding-x = 4,0
+window-padding-y = 4,0
+

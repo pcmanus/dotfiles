@@ -32,11 +32,11 @@ vim.cmd [[au CmdwinLeave * nnoremap <BS> <c-t>]]
 vim.keymap.set('n', '<leader>v', ':vsplit<CR>', opts)
 vim.keymap.set('n', '<leader>h', ':split<CR>', opts)
 
--- Navigation
-vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
-vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
-vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
-vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
+-- Navigation (use tmux navigator instead)
+-- vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
+-- vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
+-- vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
+-- vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
 
 -- Disable stuffs we don't nee
 vim.keymap.set("n", "Q", "<nop>")
