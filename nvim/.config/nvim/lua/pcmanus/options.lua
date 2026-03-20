@@ -34,6 +34,11 @@ vim.opt.completeopt = "menuone,noselect"
 
 vim.opt.smartindent = true         -- Auto-indent after '{'. etc...
 
+-- Folding via treesitter
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevelstart = 0        -- Start with all folds closed
+
 -- Netrw
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0

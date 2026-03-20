@@ -62,7 +62,7 @@ return {
 
   {
     "mrcjkb/rustaceanvim",
-    version = "^5", -- follow the plugin's recommended major version
+    version = "^8",
     ft = { "rust" },
   },
   {

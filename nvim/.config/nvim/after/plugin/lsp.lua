@@ -13,8 +13,8 @@ vim.diagnostic.config({
 })
 
 local diag_opts = { silent = true }
-vim.keymap.set('n', '<C-p>', function() vim.diagnostic.jump({ count = -1 }) end, diag_opts)
-vim.keymap.set('n', '<C-n>', function() vim.diagnostic.jump({ count = 1 }) end, diag_opts)
+vim.keymap.set('n', '<leader>k', function() vim.diagnostic.jump({ count = -1 }) end, diag_opts)
+vim.keymap.set('n', '<leader>j', function() vim.diagnostic.jump({ count = 1 }) end, diag_opts)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, diag_opts)
 vim.keymap.set('n', '<leader>ll', vim.diagnostic.setloclist, diag_opts)
 
