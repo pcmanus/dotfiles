@@ -51,6 +51,26 @@ vim.api.nvim_create_autocmd('LspAttach', {
       vim.lsp.buf.format()
     end, { desc = 'Format current buffer with LSP' })
 
+    -- Format on save for Rust files (rust-analyzer uses rustfmt, same as cargo fmt)
+    if vim.bo[bufnr].filetype == 'rust' then
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.buf.format({ bufnr = bufnr })
+        end,
+      })
+
+      -- Re-run clippy when the file is reloaded from disk (e.g. autoread)
+      vim.api.nvim_create_autocmd('FileChangedShellPost', {
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.buf_notify(bufnr, 'textDocument/didSave', {
+            textDocument = { uri = vim.uri_from_bufnr(bufnr) },
+          })
+        end,
+      })
+    end
+
     nmap('<leader>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, '[W]orkspace [L]ist Folders')

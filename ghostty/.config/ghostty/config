@@ -11,6 +11,7 @@ mouse-hide-while-typing = true
 # Window
 macos-titlebar-style = hidden
 confirm-close-surface = false
+keybind = super+w=unbind
 
 # Padding (left, right, top, bottom → x/y in Ghostty)
 window-padding-x = 4,0

@@ -120,7 +120,6 @@ bindkey '\e[F' end-of-line
 export CASSANDRA_USE_JDK11=true
 export JAVA11_HOME=/home/pcmanus/.sdkman/candidates/java/11.0.21-tem
 
-export KUBECONFIG=kube.yaml
 
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -164,11 +163,13 @@ alias pip="uv pip"
 #alias python="uv run python"
 
 [[ -s "$HOME/.config/zsh/worktree.zsh" ]] && source "$HOME/.config/zsh/worktree.zsh"
+[[ -s "$HOME/.config/zsh/work_profiles.zsh" ]] && source "$HOME/.config/zsh/work_profiles.zsh"
 
 # Kubectl
 source <(kubectl completion zsh)
 alias k=kubecolor
 compdef k=kubectl
+[[ -s "$HOME/.config/zsh/platform.zsh" ]] && source "$HOME/.config/zsh/platform.zsh"
 
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
