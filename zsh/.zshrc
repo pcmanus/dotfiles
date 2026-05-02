@@ -126,12 +126,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 [[ -s "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh" ]] && source "$HOME/Git/cloud-ondemand/support-tools/kube/zhrc.sh"
 
-if command -v fnm >/dev/null 2>&1; then
-  eval "$(fnm env --use-on-cd --shell zsh)"
-fi
-
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew (PATH set by ~/.zprofile's `brew shellenv`)
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 # Neovim as MANPAGER
@@ -146,30 +141,36 @@ export FZF_DEFAULT_COMMAND='rg --hidden -l ""' # Include hidden files
 
 export BAT_THEME=Nord
 
-autoload -U add-zsh-hook
-
-load-venv() {
-  if [[ -f ".venv/bin/activate" ]]; then
-    source .venv/bin/activate >/dev/null 2>&1
-  fi
-}
-
-add-zsh-hook chpwd load-venv
-load-venv
-
 alias venv="uv venv"
 alias pip="uv pip"
 #export UV_PYTHON=3.14
 #alias python="uv run python"
 
-[[ -s "$HOME/.config/zsh/worktree.zsh" ]] && source "$HOME/.config/zsh/worktree.zsh"
-[[ -s "$HOME/.config/zsh/work_profiles.zsh" ]] && source "$HOME/.config/zsh/work_profiles.zsh"
+for f in "$HOME"/.config/zsh/*.zsh(N); do source "$f"; done
 
 # Kubectl
 source <(kubectl completion zsh)
 alias k=kubecolor
-compdef k=kubectl
-[[ -s "$HOME/.config/zsh/platform.zsh" ]] && source "$HOME/.config/zsh/platform.zsh"
+compdef kubecolor=kubectl
+
+# Chpwd hooks: registration order = execution order.
+# We want fnm first (resolve Node version), then venv activation, then zoxide.
+autoload -U add-zsh-hook
+
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
+
+load-venv() {
+  # Re-sourcing activate on every chpwd destroys PATH changes made after
+  # the initial activation (activate's deactivate restores _OLD_VIRTUAL_PATH).
+  # Only source it if the target venv isn't already active.
+  if [[ -f ".venv/bin/activate" && "${VIRTUAL_ENV:-}" != "${PWD}/.venv" ]]; then
+    source .venv/bin/activate >/dev/null 2>&1
+  fi
+}
+add-zsh-hook chpwd load-venv
+load-venv
 
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"

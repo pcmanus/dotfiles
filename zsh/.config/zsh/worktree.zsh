@@ -6,18 +6,14 @@
 #   linked worktrees:    $HOME/.worktrees/myrepo/<sanitized-branch>
 #
 # Commands:
-#   wt new <branch>        Create/switch to a worktree for branch
-#   wt add <branch>        Alias for new
-#   wt jump                Fuzzy-jump to one of this repo's worktrees
-#   wt list                List worktrees
-#   wt rm <branch|path>    Remove a linked worktree
-#   wt done <branch|path>  Remove worktree, try deleting local branch, prune
-#   wt repo                Cd to the main worktree
-#   wt path [branch]       Print worktree path root or branch path
-#   wt prune               Prune stale metadata
+#   wt new <branch>        Create a new worktree for branch and cd into it
+#   wt jump [name]         Jump to a worktree (fzf picker if no argument)
+#   wt list                List worktrees for current repo
+#   wt rm [branch|path]    Remove a worktree (default: current)
+#   wt rename <name>       Rename current worktree and its branch
 #
 # Optional:
-#   - fzf for wt jump
+#   - fzf for wt jump (without argument)
 # ------------------------------------------------------------------------------
 
 # Return 0 if inside a git worktree/repo.
@@ -31,22 +27,13 @@ _wt_current_root() {
 }
 
 # Absolute path to the shared git dir for this repository.
-# Same across all linked worktrees.
 _wt_common_dir() {
   local d
   d="$(git rev-parse --git-common-dir 2>/dev/null)" || return 1
   cd "$d" 2>/dev/null && pwd -P
 }
 
-# Absolute path to the current worktree's own .git dir.
-_wt_git_dir() {
-  local d
-  d="$(git rev-parse --absolute-git-dir 2>/dev/null)" || return 1
-  cd "$d" 2>/dev/null && pwd -P
-}
-
 # Path of the main worktree for this repository.
-# This is the parent of the shared git dir.
 _wt_main_root() {
   local common
   common="$(_wt_common_dir)" || return 1
@@ -67,89 +54,7 @@ _wt_repo_wt_root() {
   printf '%s\n' "$HOME/.worktrees/$repo"
 }
 
-# Symlink path for a repo (used for short prompt display).
-_wt_repo_symlink() {
-  local repo="$1"
-  printf '%s\n' "$HOME/.wt/${repo}"
-}
-
-# Create/update the prompt symlink for a repo's worktree.
-_wt_update_symlink() {
-  local repo="$1" target="$2"
-  local sym
-  sym="$(_wt_repo_symlink "$repo")"
-  mkdir -p "$HOME/.wt"
-  ln -sfn "$target" "$sym"
-}
-
-# Remove the prompt symlink if it points to the given target.
-_wt_remove_symlink() {
-  local repo="$1" target="$2"
-  local sym
-  sym="$(_wt_repo_symlink "$repo")"
-  [[ -L "$sym" ]] || return 0
-  local cur
-  cur="$(readlink "$sym")"
-  [[ "$cur" == "$target" ]] && rm -f "$sym"
-  # Remove ~/.wt if empty
-  rmdir "$HOME/.wt" 2>/dev/null || true
-}
-
-# Ensure starship.toml has a directory substitution for this repo.
-_wt_ensure_starship_subst() {
-  local repo="$1"
-  local config="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
-  local key="~/.wt/${repo}"
-
-  [[ -f "$config" ]] || return 0
-  grep -qF "$key" "$config" 2>/dev/null && return 0
-
-  local entry="\"${key}\" = \"[wt ${repo}]\""
-  local tmp="${config}.wttmp.$$"
-  awk -v entry="$entry" '
-    /^\[directory\.substitutions\]/ { print; print entry; next }
-    { print }
-  ' "$config" > "$tmp" && mv "$tmp" "$config"
-}
-
-# Remove the starship.toml directory substitution for this repo.
-_wt_remove_starship_subst() {
-  local repo="$1"
-  local config="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
-  local key="~/.wt/${repo}"
-
-  [[ -f "$config" ]] || return 0
-  grep -qF "$key" "$config" 2>/dev/null || return 0
-
-  local tmp="${config}.wttmp.$$"
-  grep -vF "$key" "$config" > "$tmp" && mv "$tmp" "$config"
-}
-
-# True if the repo has any linked worktrees (besides the main one).
-_wt_has_linked_worktrees() {
-  local wpath branch kind
-  while IFS=$'\t' read -r wpath branch kind; do
-    [[ "$kind" == "linked" ]] && return 0
-  done < <(_wt_list_tsv)
-  return 1
-}
-
-# If PWD is inside the given path, cd to main worktree.
-_wt_leave_if_inside() {
-  local target="$1"
-  # Resolve PWD through symlinks for comparison
-  local real_pwd real_target
-  real_pwd="$(pwd -P)"
-  real_target="$(cd "$target" 2>/dev/null && pwd -P)" || return 0
-  if [[ "$real_pwd" == "$real_target" || "$real_pwd" == "$real_target"/* ]]; then
-    local root
-    root="$(_wt_main_root)" || return 0
-    builtin cd "$root"
-  fi
-}
-
 # Make a branch name safe as a single directory name.
-# Keeps the real git branch unchanged.
 _wt_sanitize_branch() {
   local branch="$1"
   branch="${branch//\//-}"
@@ -157,6 +62,22 @@ _wt_sanitize_branch() {
   branch="${branch//:/-}"
   branch="${branch//\\/-}"
   printf '%s\n' "$branch"
+}
+
+# Extract a short display name from a branch for the prompt.
+#   feature/pldev-123-something → pldev-123
+#   pldev-123-something         → pldev-123
+#   pldev-123                   → pldev-123
+#   my-feature                  → my-feature
+_wt_short_name() {
+  local branch="$1"
+  local name="$branch"
+  name="${name#feature/}"
+  if [[ "$name" =~ ^([a-zA-Z]+-[0-9]+) ]]; then
+    printf '%s\n' "${match[1]}"
+  else
+    _wt_sanitize_branch "$branch"
+  fi
 }
 
 # Path where a branch worktree should live.
@@ -257,7 +178,7 @@ _wt_resolve_worktree_path() {
   return 1
 }
 
-# Get the branch currently checked out in a worktree path, if any.
+# Get the branch checked out in a worktree path.
 _wt_branch_for_path() {
   local wanted="$1"
   local wpath branch kind
@@ -272,9 +193,75 @@ _wt_branch_for_path() {
   return 1
 }
 
+# If PWD is inside the given path, cd to main worktree.
+_wt_leave_if_inside() {
+  local target="$1"
+  local real_pwd real_target
+  real_pwd="$(pwd -P)"
+  real_target="$(cd "$target" 2>/dev/null && pwd -P)" || return 0
+  if [[ "$real_pwd" == "$real_target" || "$real_pwd" == "$real_target"/* ]]; then
+    local root
+    root="$(_wt_main_root)" || return 0
+    builtin cd "$root"
+  fi
+}
+
+# Convert absolute path to tilde-prefixed for starship substitution keys.
+_wt_tilde_path() {
+  local p="$1"
+  if [[ "$p" == "$HOME"/* ]]; then
+    printf '%s\n' "~${p#$HOME}"
+  else
+    printf '%s\n' "$p"
+  fi
+}
+
+# Add a starship directory substitution for a worktree.
+_wt_add_starship_subst() {
+  local wpath="$1" display="$2"
+  local config="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
+  local key
+  key="$(_wt_tilde_path "$wpath")"
+
+  [[ -f "$config" ]] || return 0
+  grep -qF "\"$key\"" "$config" 2>/dev/null && return 0
+
+  local entry="\"${key}\" = \"${display}\""
+  local tmp="${config}.wttmp.$$"
+  awk -v entry="$entry" '
+    /^\[directory\.substitutions\]/ { print; print entry; next }
+    { print }
+  ' "$config" > "$tmp" && mv "$tmp" "$config"
+}
+
+# Remove a starship directory substitution by worktree path.
+_wt_remove_starship_subst() {
+  local wpath="$1"
+  local config="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
+  local key
+  key="$(_wt_tilde_path "$wpath")"
+
+  [[ -f "$config" ]] || return 0
+  grep -qF "\"$key\"" "$config" 2>/dev/null || return 0
+
+  local tmp="${config}.wttmp.$$"
+  grep -vF "\"$key\"" "$config" > "$tmp" && mv "$tmp" "$config"
+}
+
+# Check if a worktree is clean. Returns 1 with red error if dirty.
+_wt_check_clean() {
+  local wpath="$1"
+  if [[ -n "$(git -C "$wpath" status --porcelain 2>/dev/null)" ]]; then
+    print -P "%F{red}wt: worktree is not clean (has uncommitted or untracked changes)%f" >&2
+    return 1
+  fi
+  return 0
+}
+
+# --- Commands -----------------------------------------------------------------
+
 _wt_new() {
   local branch="$1"
-  local wpath
 
   if [[ -z "$branch" ]]; then
     echo "usage: wt new <branch>" >&2
@@ -286,6 +273,7 @@ _wt_new() {
     return 1
   fi
 
+  local wpath
   wpath="$(_wt_branch_path "$branch")" || return 1
 
   if [[ -e "$wpath" ]]; then
@@ -301,19 +289,12 @@ _wt_new() {
     git worktree add -b "$branch" "$wpath" || return 1
   fi
 
-  # Set up symlink and starship substitution for short prompt
-  local repo
+  local repo short_name
   repo="$(_wt_repo_name)" || return 1
-  _wt_update_symlink "$repo" "$wpath"
-  _wt_ensure_starship_subst "$repo"
+  short_name="$(_wt_short_name "$branch")"
+  _wt_add_starship_subst "$wpath" "[${repo}@${short_name}]"
 
-  # cd through symlink so $PWD uses the short path;
-  # use builtin cd + NO_CHASE_LINKS to prevent zoxide / CHASE_LINKS
-  # from resolving the symlink back to the real path.
-  local sym
-  sym="$(_wt_repo_symlink "$repo")"
-  setopt local_options NO_CHASE_LINKS
-  builtin cd "$sym" || builtin cd "$wpath" || return 1
+  builtin cd "$wpath" || return 1
 }
 
 _wt_list() {
@@ -332,215 +313,206 @@ _wt_list() {
 }
 
 _wt_jump() {
-  local selection wpath
-
   if ! _wt_in_repo; then
     echo "wt: not inside a git repository" >&2
     return 1
   fi
 
-  if command -v fzf >/dev/null 2>&1; then
-    selection="$(
-      _wt_list_tsv \
-        | awk -F '\t' '{
-            b = ($2 == "" ? "(detached)" : $2)
-            printf "%-8s\t%-35s\t%s\n", $3, b, $1
-          }' \
-        | fzf --delimiter=$'\t' --with-nth=1,2,3 --prompt='worktree> '
-    )" || return 1
+  local wpath
 
-    wpath="${selection##*$'\t'}"
-    setopt local_options NO_CHASE_LINKS
-    # For linked worktrees, cd through symlink for short prompt
-    if ! _wt_is_main_path "$wpath"; then
-      local repo
-      repo="$(_wt_repo_name)" || { builtin cd "$wpath" || return 1; return 0; }
-      _wt_update_symlink "$repo" "$wpath"
-      _wt_ensure_starship_subst "$repo"
-      local sym
-      sym="$(_wt_repo_symlink "$repo")"
-      builtin cd "$sym" || builtin cd "$wpath" || return 1
-    else
-      builtin cd "$wpath" || return 1
-    fi
-  else
+  if [[ -n "$1" ]]; then
+    wpath="$(_wt_resolve_worktree_path "$1")" || {
+      echo "wt: could not find worktree: $1" >&2
+      return 1
+    }
+    builtin cd "$wpath" || return 1
+    return 0
+  fi
+
+  if ! command -v fzf >/dev/null 2>&1; then
     echo "wt: fzf not found; available worktrees:" >&2
     _wt_list >&2
     return 1
   fi
-}
 
-_wt_repo() {
-  local root
-  if ! _wt_in_repo; then
-    echo "wt: not inside a git repository" >&2
-    return 1
-  fi
-  root="$(_wt_main_root)" || return 1
-  cd "$root" || return 1
-}
+  local selection
+  selection="$(
+    _wt_list_tsv \
+      | awk -F '\t' '{
+          b = ($2 == "" ? "(detached)" : $2)
+          printf "%-8s\t%-35s\t%s\n", $3, b, $1
+        }' \
+      | fzf --delimiter=$'\t' --with-nth=1,2,3 --prompt='worktree> '
+  )" || return 1
 
-_wt_path() {
-  if ! _wt_in_repo; then
-    echo "wt: not inside a git repository" >&2
-    return 1
-  fi
-
-  if [[ -n "$1" ]]; then
-    _wt_branch_path "$1"
-  else
-    _wt_repo_wt_root
-  fi
+  wpath="${selection##*$'\t'}"
+  builtin cd "$wpath" || return 1
 }
 
 _wt_rm() {
+  if ! _wt_in_repo; then
+    echo "wt: not inside a git repository" >&2
+    return 1
+  fi
+
   local target="$1"
   local wpath
 
-  if [[ -z "$target" ]]; then
-    echo "usage: wt rm <branch|path|.>" >&2
-    return 1
-  fi
-
-  if ! _wt_in_repo; then
-    echo "wt: not inside a git repository" >&2
-    return 1
-  fi
-
-  # "." means the current worktree
-  if [[ "$target" == "." ]]; then
+  if [[ -z "$target" || "$target" == "." ]]; then
     wpath="$(_wt_current_root)" || {
-      echo "wt: could not determine current worktree root" >&2
+      print -P "%F{red}wt: could not determine current worktree root%f" >&2
       return 1
     }
   else
     wpath="$(_wt_resolve_worktree_path "$target")" || {
-      echo "wt: could not resolve worktree: $target" >&2
+      print -P "%F{red}wt: could not resolve worktree: $target%f" >&2
       return 1
     }
   fi
 
   if _wt_is_main_path "$wpath"; then
-    echo "wt: refusing to remove main worktree: $wpath" >&2
+    print -P "%F{red}wt: refusing to remove the main worktree%f" >&2
     return 1
   fi
 
-  local repo
-  repo="$(_wt_repo_name)" || true
+  _wt_check_clean "$wpath" || return 1
 
-  # cd back to main repo if we are inside the worktree being removed
-  _wt_leave_if_inside "$wpath"
-
-  git worktree remove "$wpath" || return 1
-
-  if [[ -n "$repo" ]]; then
-    _wt_remove_symlink "$repo" "$wpath"
-    _wt_has_linked_worktrees || _wt_remove_starship_subst "$repo"
-  fi
-}
-
-_wt_done() {
-  local target="$1"
-  local wpath branch
-
-  if [[ -z "$target" ]]; then
-    echo "usage: wt done <branch|path|.>" >&2
-    return 1
-  fi
-
-  if ! _wt_in_repo; then
-    echo "wt: not inside a git repository" >&2
-    return 1
-  fi
-
-  # "." means the current worktree
-  if [[ "$target" == "." ]]; then
-    wpath="$(_wt_current_root)" || {
-      echo "wt: could not determine current worktree root" >&2
-      return 1
-    }
-  else
-    wpath="$(_wt_resolve_worktree_path "$target")" || {
-      echo "wt: could not resolve worktree: $target" >&2
-      return 1
-    }
-  fi
-
-  if _wt_is_main_path "$wpath"; then
-    echo "wt: refusing to remove main worktree: $wpath" >&2
-    return 1
-  fi
-
+  local branch
   branch="$(_wt_branch_for_path "$wpath")"
 
-  local repo
-  repo="$(_wt_repo_name)" || true
+  git fetch origin 2>/dev/null
 
-  # cd back to main repo if we are inside the worktree being removed
   _wt_leave_if_inside "$wpath"
 
-  git worktree remove "$wpath" || return 1
+  git worktree remove "$wpath" || {
+    print -P "%F{red}wt: failed to remove worktree%f" >&2
+    return 1
+  }
 
-  if [[ -n "$repo" ]]; then
-    _wt_remove_symlink "$repo" "$wpath"
-    _wt_has_linked_worktrees || _wt_remove_starship_subst "$repo"
-  fi
+  _wt_remove_starship_subst "$wpath"
 
   if [[ -n "$branch" ]]; then
-    git branch -d "$branch" >/dev/null 2>&1 || true
+    if _wt_branch_is_merged "$branch"; then
+      git branch -D "$branch" 2>/dev/null
+    else
+      echo "wt: branch '$branch' not merged into origin/main; branch kept"
+    fi
   fi
-
-  git worktree prune
 }
 
-_wt_prune() {
+# Return 0 if the branch has been merged into origin/main, considering
+# both true merges (ancestor check) and squash/rebase merges (via gh).
+_wt_branch_is_merged() {
+  local branch="$1"
+
+  if git merge-base --is-ancestor "$branch" origin/main 2>/dev/null; then
+    return 0
+  fi
+
+  if command -v gh >/dev/null 2>&1; then
+    local count
+    count="$(gh pr list --state merged --head "$branch" --limit 1 --json number --jq 'length' 2>/dev/null)"
+    if [[ "$count" == "1" ]]; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+_wt_rename() {
+  local new_name="$1"
+
+  if [[ -z "$new_name" ]]; then
+    echo "usage: wt rename <new-name>" >&2
+    return 1
+  fi
+
   if ! _wt_in_repo; then
     echo "wt: not inside a git repository" >&2
     return 1
   fi
-  git worktree prune
+
+  local wpath
+  wpath="$(_wt_current_root)" || {
+    print -P "%F{red}wt: could not determine current worktree root%f" >&2
+    return 1
+  }
+
+  if _wt_is_main_path "$wpath"; then
+    print -P "%F{red}wt: cannot rename the main worktree%f" >&2
+    return 1
+  fi
+
+  _wt_check_clean "$wpath" || return 1
+
+  local old_branch
+  old_branch="$(_wt_branch_for_path "$wpath")"
+  if [[ -z "$old_branch" ]]; then
+    print -P "%F{red}wt: worktree has no branch (detached HEAD?)%f" >&2
+    return 1
+  fi
+
+  if git show-ref --verify --quiet "refs/heads/$new_name"; then
+    print -P "%F{red}wt: branch '$new_name' already exists%f" >&2
+    return 1
+  fi
+
+  local new_path repo short_name
+  new_path="$(_wt_branch_path "$new_name")" || return 1
+  repo="$(_wt_repo_name)" || return 1
+  short_name="$(_wt_short_name "$new_name")"
+
+  if [[ -e "$new_path" ]]; then
+    print -P "%F{red}wt: path already exists: $new_path%f" >&2
+    return 1
+  fi
+
+  # Rename the branch
+  git branch -m "$old_branch" "$new_name" || {
+    print -P "%F{red}wt: failed to rename branch%f" >&2
+    return 1
+  }
+
+  # Move the worktree (cd away first since the directory will be moved)
+  mkdir -p "$(dirname "$new_path")" || return 1
+  local main_root
+  main_root="$(_wt_main_root)" || return 1
+  builtin cd "$main_root"
+
+  git worktree move "$wpath" "$new_path" || {
+    git branch -m "$new_name" "$old_branch" 2>/dev/null
+    builtin cd "$wpath" 2>/dev/null
+    print -P "%F{red}wt: failed to move worktree%f" >&2
+    return 1
+  }
+
+  # Update starship substitution
+  _wt_remove_starship_subst "$wpath"
+  _wt_add_starship_subst "$new_path" "[${repo}@${short_name}]"
+
+  builtin cd "$new_path" || return 1
 }
+
+# --- Dispatcher ---------------------------------------------------------------
 
 wt() {
   local cmd="$1"
   shift || true
 
   case "$cmd" in
-    new|add)
-      _wt_new "$@"
-      ;;
-    jump|j)
-      _wt_jump "$@"
-      ;;
-    list|ls)
-      _wt_list "$@"
-      ;;
-    rm|remove)
-      _wt_rm "$@"
-      ;;
-    done)
-      _wt_done "$@"
-      ;;
-    repo)
-      _wt_repo "$@"
-      ;;
-    path)
-      _wt_path "$@"
-      ;;
-    prune)
-      _wt_prune "$@"
-      ;;
+    new)       _wt_new "$@" ;;
+    jump|j)    _wt_jump "$@" ;;
+    list|ls)   _wt_list "$@" ;;
+    rm|remove) _wt_rm "$@" ;;
+    rename)    _wt_rename "$@" ;;
     ""|help|-h|--help)
       cat <<'EOF'
 wt new <branch>        Create a new worktree for branch and cd into it
-wt add <branch>        Same as new
-wt jump                Fuzzy-jump to a worktree
+wt jump [name]         Jump to a worktree (fzf picker if no argument)
 wt list                List worktrees for current repo
-wt rm <branch|path>    Remove a worktree
-wt done <branch|path>  Remove worktree, try deleting local branch, prune
-wt repo                Cd to the main worktree
-wt path [branch]       Print worktree directory path
-wt prune               Prune stale worktree metadata
+wt rm [branch|path]    Remove a worktree (default: current)
+wt rename <name>       Rename current worktree and its branch
 EOF
       ;;
     *)
@@ -550,9 +522,7 @@ EOF
   esac
 }
 
-# ------------------------------------------------------------------------------
-# zsh completion
-# ------------------------------------------------------------------------------
+# --- Completion ---------------------------------------------------------------
 
 _wt_branches() {
   local -a branches
@@ -560,23 +530,13 @@ _wt_branches() {
   _describe -t branches 'branches' branches
 }
 
-_wt_worktrees() {
-  local -a items
-  local wpath branch kind label
-
-  items=()
+_wt_worktree_names() {
+  local -a names
+  local wpath branch kind
   while IFS=$'\t' read -r wpath branch kind; do
-    if [[ -n "$branch" ]]; then
-      label="$branch [$kind]"
-      items+=("$branch:$label")
-      items+=("$wpath:$label")
-    else
-      label="$wpath [$kind]"
-      items+=("$wpath:$label")
-    fi
+    [[ -n "$branch" ]] && names+=("$branch")
   done < <(_wt_list_tsv 2>/dev/null)
-
-  _describe -t worktrees 'worktrees' items
+  _describe -t worktrees 'worktree' names
 }
 
 _wt_completion() {
@@ -586,17 +546,13 @@ _wt_completion() {
   local -a subcmds
   subcmds=(
     'new:create a new worktree for a branch'
-    'add:same as new'
-    'jump:fuzzy-jump to a worktree'
+    'jump:jump to a worktree'
     'j:alias for jump'
     'list:list worktrees'
     'ls:alias for list'
-    'rm:remove a linked worktree'
+    'rm:remove a worktree'
     'remove:alias for rm'
-    'done:remove a worktree and try deleting its branch'
-    'repo:cd to main worktree'
-    'path:print worktree path'
-    'prune:prune stale worktree metadata'
+    'rename:rename current worktree and branch'
     'help:show help'
   )
 
@@ -606,20 +562,13 @@ _wt_completion() {
   fi
 
   case "$words[2]" in
-    new|add)
+    new)
       _alternative \
         'branches:branch name:_wt_branches' \
         'values:new branch:_default'
       ;;
-    rm|remove|done)
-      _wt_worktrees
-      ;;
-    path)
-      _alternative \
-        'branches:branch name:_wt_branches' \
-        'values:branch:_default'
-      ;;
-    jump|j|list|ls|repo|prune|help)
+    jump|j|rm|remove)
+      _wt_worktree_names
       ;;
     *)
       ;;

@@ -38,6 +38,7 @@ vim.opt.smartindent = true         -- Auto-indent after '{'. etc...
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevelstart = 0        -- Start with all folds closed
+vim.opt.viewoptions = { "folds", "cursor" }  -- mkview/loadview only save folds and cursor
 
 -- Netrw
 vim.g.netrw_browse_split = 0

@@ -20,11 +20,26 @@ autocmd({'BufNewFile', 'BufRead'}, {
   end
 })
 
--- Check for external file changes on focus/buffer switch
+-- Check for external file changes on focus/buffer switch.
+-- When autoread reloads a file, treesitter fold expressions are re-evaluated
+-- and all folds snap shut (foldlevelstart=0). Save fold state before checktime
+-- and restore it after any reload to preserve the user's fold state.
 autocmd({ 'FocusGained', 'BufEnter' }, {
   group = init_lua_augroup,
   pattern = '*',
-  command = 'checktime'
+  callback = function()
+    if vim.bo.buftype ~= '' then return end
+    pcall(vim.cmd, 'silent! mkview! 1')
+    vim.cmd('silent! checktime')
+  end
+})
+
+autocmd('FileChangedShellPost', {
+  group = init_lua_augroup,
+  pattern = '*',
+  callback = function()
+    pcall(vim.cmd, 'silent! loadview 1')
+  end
 })
 
 -- Save when losing focus
