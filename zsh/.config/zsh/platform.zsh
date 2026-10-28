@@ -35,7 +35,9 @@ platform-switch() {
     platform-auth || return 1
   fi
 
+  export AWS_PROFILE="atai-$env"
   kubectl config use-context "$ctx"
+  echo "AWS_PROFILE=$AWS_PROFILE"
 }
 
 platform() {

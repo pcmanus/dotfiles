@@ -69,8 +69,8 @@ autoload zmv
 
 # Aliases
 
-alias ls='eza -F --group-directories-first --icons'
-alias ll='eza -F --group-directories-first -l --icons --git --icons'
+alias ls='eza -F --group-directories-first --icons auto'
+alias ll='eza -F --group-directories-first -l --icons auto --git --icons'
 #alias reload_kitty='kill -SIGUSR1 $(pgrep kitty)'
 #alias icat='kitten icat'
 alias vim='nvim'
@@ -176,3 +176,7 @@ if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Point Docker/testcontainers at the colima daemon socket
+export DOCKER_HOST="unix:///Users/pcmanus/.colima/default/docker.sock"

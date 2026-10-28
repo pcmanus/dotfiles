@@ -19,6 +19,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.termguicolors = true   -- It's the 21st century ...
 
-require('lazy').setup('plugins')
+require('lazy').setup('plugins', {
+  rocks = { enabled = false },
+})
 
 require('pcmanus')

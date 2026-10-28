@@ -54,14 +54,14 @@ autocmd({'FocusLost'}, {
 autocmd({'VimResized'}, {
   group = init_lua_augroup,
   pattern = '*',
-  command = 'windcmd ='
+  command = 'wincmd ='
 })
 
 autocmd('TextYankPost', {
   group = init_lua_augroup,
   pattern = '*',
   callback = function()
-    vim.highlight.on_yank({
+    vim.hl.on_yank({
       higroup = 'IncSearch',
       timeout = 300,
     })

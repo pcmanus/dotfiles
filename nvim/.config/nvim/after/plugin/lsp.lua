@@ -37,14 +37,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
     nmap('<CR>', vim.lsp.buf.definition, 'Goto Definition')
-    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
     nmap('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
     -- K -> hover is set by neovim's runtime on LspAttach by default
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
     -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)

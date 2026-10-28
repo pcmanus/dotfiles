@@ -23,10 +23,13 @@ vim.keymap.set('n', '<CR>', '<c-]>', opts)
 vim.keymap.set('n', '<BS>', '<c-t>', opts)
 
 -- Reset enter and backspace when in the command
-vim.cmd [[au CmdwinEnter * nnoremap <CR> <CR>]]
-vim.cmd [[au CmdwinEnter * nnoremap <BS> <BS>]]
-vim.cmd [[au CmdwinLeave * nnoremap <CR> <c-]>]]
-vim.cmd [[au CmdwinLeave * nnoremap <BS> <c-t>]]
+vim.api.nvim_create_autocmd('CmdwinEnter', {
+  group = vim.api.nvim_create_augroup('CmdwinMappings', {}),
+  callback = function()
+    vim.keymap.set('n', '<CR>', '<CR>', { buffer = true })
+    vim.keymap.set('n', '<BS>', '<BS>', { buffer = true })
+  end,
+})
 
 -- Making splits
 vim.keymap.set('n', '<leader>v', ':vsplit<CR>', opts)
